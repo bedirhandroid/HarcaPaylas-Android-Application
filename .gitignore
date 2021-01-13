@@ -1,128 +1,16 @@
-İçeriğe geç
-Ara veya atla…
-
-Çekme isteği s
-Sorunlar
-Pazar yeri
-keşfetmek
- 
-@kafadergisi 
-bdrhn0
-/
-HarcaPaylas-Android-Uygulama
-1
-00
-Kod
-Sorunlar
-Çekme istekleri
-Hareketler
-Projeler
-Wiki
-Güvenlik
-İçgörüler
-Ayarlar
-HarcaPaylas-Android-Uygulama/ .gitignore
-@kafadergisi
-bdrhn0 İlk kaydetme
-Son kaydetme 6c0c178 23 dakika önce
- Tarih
- 1 katılımcı
-85 satır (68 sloc)  1,4 KB
-  
-# Dahili uygulama dosyaları
-* .apk
-* .aar
-* .ap_
-* .aab
-
-# ART / Dalvik VM için dosyalar
-* .dex
-
-# Java sınıfı dosyaları
-* .class
-
-# Oluşturulan dosyalar
-bin /
-gen /
-dışarı /
-#   İhtiyaç duymanız ve uygulamanızda sürüm derleme türü dosyalarınızın olmaması durumunda aşağıdaki satırın açıklamasını kaldırın
-# release /
-
-# Gradle dosyaları
-.gradle /
-inşa /
-
-# Yerel yapılandırma dosyası (sdk yolu vb.)
-local.properties
-
-# Eclipse tarafından oluşturulan Proguard klasörü
-proguard /
-
-# Günlük Dosyaları
-* .log
-
-# Android Studio Navigasyon düzenleyici geçici dosyaları
-.navigation /
-
-# Android Studio klasörü yakalar
-yakalar /
-
-# IntelliJ
-* .iml
-.idea / workspace.xml
-.idea / tasks.xml
-.idea / gradle.xml
-.idea / assetWizardSettings.xml
-.idea / sözlükler
-.idea / libraries
-# .Gitignore dosyasında Android Studio 3.
-.idea / önbelleğe
-.idea / modules.xml
-# Gezinme Düzenleyicideki öğelerin konumunu korumak sizin için önemliyse sonraki satırı yorumlayın
-.idea / navEditor.xml
-
-# Anahtar deposu dosyaları
-# Anahtar deposu dosyalarınızı içinde kontrol etmek istemiyorsanız aşağıdaki satırların açıklamasını kaldırın.
-# * .jks
-# * .keystore
-
-# External native build folder generated in Android Studio 2.2 and later
+*.iml
+.gradle
+.idea
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
 .externalNativeBuild
-.cxx/
-
-# Google Services (e.g. APIs or Firebase)
-# google-services.json
-
-# Freeline
-freeline.py
-freeline/
-freeline_project_description.json
-
-# fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots
-fastlane/test_output
-fastlane/readme.md
-
-# Version control
-vcs.xml
-
-# lint
-lint/intermediates/
-lint/generated/
-tiftik / çıktılar /
-lint / tmp /
-# lint / raporlar /
-© 2021 GitHub, Inc.
-Koşullar
-Gizlilik
-Güvenlik
-Durum
-Yardım
-GitHub ile iletişime geçin
-Fiyatlandırma
-API
-Eğitim
-Blog
-hakkında
+.cxx
+local.properties
