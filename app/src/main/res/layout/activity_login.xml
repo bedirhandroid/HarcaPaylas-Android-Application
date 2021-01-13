@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_giris_background"
+    android:padding="30dp"
+    tools:context=".login.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+        <TextView
+            android:text="@string/welcome"
+            android:textAllCaps="true"
+            android:textSize="35sp"
+            android:textColor="#182B8F"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"/>
+        <EditText
+            android:id="@+id/emailText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:hint="@string/placeholder_email"
+            android:inputType="textEmailAddress"
+            android:textAlignment="center"
+            tools:ignore="Autofill" />
+
+        <EditText
+            android:id="@+id/passwordText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:hint="@string/placeholder_password"
+            android:inputType="textPassword"
+            android:textAlignment="center"
+            tools:ignore="Autofill" />
+
+        <Button
+            android:id="@+id/btnAction"
+            android:layout_width="match_parent"
+            android:layout_marginTop="15dp"
+            android:layout_height="0dp"
+            android:background="#182B8F"
+            android:textColor="#FFFFFF"
+            android:layout_weight="1"
+            android:layout_marginEnd="2.5dp"
+            android:text="@string/login"
+            tools:ignore="ButtonStyle" />
+        <TextView
+            android:id="@+id/btnChangeAction"
+            android:text="@string/second_register"
+            android:layout_marginTop="15dp"
+            android:textColor="#182B8F"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center"/>
+    </LinearLayout>
+</FrameLayout>

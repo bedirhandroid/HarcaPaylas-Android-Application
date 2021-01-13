@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">HarcaPaylas</string>
+
+    <string name="welcome">Hoşgeldiniz!</string>
+
+    <string name="placeholder_email">E-Posta Giriniz</string>
+    <string name="placeholder_password">Şifre Giriniz</string>
+
+    <string name="login">Giriş Yap</string>
+    <string name="register">Kayıt Ol</string>
+    <string name="second_register">Hemen Kayıt Ol!</string>
+    <string name="second_login">Giriş Yap!</string>
 </resources>

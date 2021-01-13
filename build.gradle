@@ -1,6 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = "1.4.21"
+
+    ext {
+        kotlin_version = "1.4.21"
+        lifecycle_lifecycle_extensions_version = '2.2.0'
+        lifecycle_lifecycle_viewmodel_ktx_version = '2.2.0'
+        lifecycle_lifecycle_livedata_ktx_version = '2.2.0'
+        recyclerview_recyclerview_version = '1.2.0-beta01'
+    }
+
     repositories {
         google()
         jcenter()
