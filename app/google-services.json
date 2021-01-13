@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "128001832586",
+    "project_id": "harcapaylas",
+    "storage_bucket": "harcapaylas.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:128001832586:android:6ba0263af08d863e295f73",
+        "android_client_info": {
+          "package_name": "com.bedirhandag.harcapaylas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "128001832586-6l6l509ou4lb6jsjn5d9epcie2us80i9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-eOcjpo_RbAOUMAHRRaVdG8hKifli6kQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "128001832586-6l6l509ou4lb6jsjn5d9epcie2us80i9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
