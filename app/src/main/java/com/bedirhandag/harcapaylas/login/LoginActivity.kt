@@ -25,6 +25,7 @@ class LoginActivity : AppCompatActivity() {
         initFirebaseAuth()
         initObservers()
         initListeners()
+
     }
 
     private fun initObservers() {
