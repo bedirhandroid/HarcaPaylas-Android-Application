@@ -9,6 +9,9 @@ class GrupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_grup)
 
-        grupKey.text = intent.getStringExtra("grupKey")
+        intent.getStringExtra("grupKey")?.let {
+            grupKey.text = it
+            this.showToast("$it Grubuna Hoşgeldin!")
+        }
     }
 }

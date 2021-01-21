@@ -48,8 +48,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun clearUI() {
         viewbinding.apply {
-            emailText.setText("")
-            passwordText.setText("")
+            emailText.setText("mrt@gmail.com")
+            passwordText.setText("mrtmrt")
         }
     }
 

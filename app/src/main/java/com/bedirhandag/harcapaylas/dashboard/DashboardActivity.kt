@@ -4,119 +4,128 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.GrupActivity
 import com.bedirhandag.harcapaylas.R
+import com.bedirhandag.harcapaylas.databinding.ActivityDashboardBinding
+import com.bedirhandag.harcapaylas.showToast
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.activity_dashboard.*
-
+import com.google.firebase.database.*
 
 class DashboardActivity : AppCompatActivity() {
 
-    var userUID = FirebaseAuth.getInstance().currentUser!!.uid
+    private lateinit var viewbinding: ActivityDashboardBinding
+    private lateinit var viewModel: DashboardViewModel
+    lateinit var userUID: String
+    lateinit var ref: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
-        var ref = FirebaseDatabase.getInstance().reference
+        initFirebase()
+        setupViewBinding()
+        setupViewModel()
+        initListeners()
+        checkHasGroup()
+    }
 
-
-
-        btnGrupKur.setOnClickListener {
-
-            var grupKey = key.text.toString()
-
-            ref.child("gruplar")
-                .child(grupKey)
-                .child("grupKey")
-                .setValue(grupKey)
-
-            ref.child("gruplar")
-                .child(grupKey)
-                .child("grupUyeleri")
-                .child(userUID)
-                .setValue(userUID)
-
-            Intent(this@DashboardActivity, GrupActivity::class.java).apply {
-                putExtra("grupKey", grupKey)
-            }.also {
-                startActivity(intent)
-                finish()
-            }
-
-
-        }
-
-        btnGirisGrup.setOnClickListener {
-            var girisGrupKey = etGrupGirisKey.text.toString()
-
-            ref.child("gruplar").addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(p0: DataSnapshot) {
-
-
-                    if (p0.hasChildren()) {
-                        for (grup in p0.children) {
-                            Log.e("grup", grup.key.toString())
-                            if (grup.key.toString() == girisGrupKey) {
-                                Toast.makeText(
-                                    this@DashboardActivity,
-                                    "${girisGrupKey} Grubuna Hoşgeldin!",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                ref.child("gruplar").child(girisGrupKey).child("grupUyeleri")
-                                    .child(userUID).setValue(userUID)
-                                ref.child("users").child(userUID).child("hangiGrubaUye")
-                                    .setValue(girisGrupKey)
-
-                                var intent =
-                                    Intent(this@DashboardActivity, GrupActivity::class.java)
-                                intent.putExtra("grupKey", girisGrupKey)
-                                startActivity(intent)
-                                finish()
-                            } else {
-                                Toast.makeText(
-                                    this@DashboardActivity,
-                                    "Grup ID Hatası!",
-                                    Toast.LENGTH_LONG
-                                ).show()
-
-                            }
+    private fun checkHasGroup() {
+        ref.child("users")
+            .child(userUID)
+            .child("hangiGrubaUye")
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.value?.let {
+                        Intent(this@DashboardActivity, GrupActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                            putExtra("grupKey", it.toString())
+                        }.also { _intent ->
+                            startActivity(_intent)
                         }
                     }
                 }
-
                 override fun onCancelled(error: DatabaseError) {}
-
             })
-        }
+    }
 
-        ref.child("users").child(userUID)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(p0: DataSnapshot) {
-                    if (p0.hasChildren()) {
-                        (p0.child("hangiGrubaUye").value as String?)?.let {
+    private fun initFirebase() {
+        ref = FirebaseDatabase.getInstance().reference
+        FirebaseAuth.getInstance().currentUser?.uid?.let { userUID = it }
+    }
+
+    private fun initListeners() {
+        viewbinding.apply {
+            btnGrupKur.setOnClickListener { createGroupOperation() }
+            btnGirisGrup.setOnClickListener { joinGroupOperation()}
+        }
+    }
+
+    private fun joinGroupOperation() {
+        val girisGrupKey = viewbinding.etGrupGirisKey.text.toString()
+
+        ref.child("gruplar").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                when {
+                    p0.hasChildren() -> {
+                        p0.children.find { it.key.toString() == girisGrupKey }?.let {
+
+                            ref.child("gruplar")
+                                .child(girisGrupKey)
+                                .child("grupUyeleri")
+                                .child(userUID)
+                                .setValue(userUID)
+
+                            ref.child("users")
+                                .child(userUID)
+                                .child("hangiGrubaUye")
+                                .setValue(girisGrupKey)
+
                             Intent(this@DashboardActivity, GrupActivity::class.java).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                                putExtra("grupKey", it)
-                            }.also {
-                                startActivity(intent)
-                                finish()
+                                putExtra("grupKey", girisGrupKey)
+                            }.also { _intent ->
+                                startActivity(_intent)
                             }
+
+                            ref.removeEventListener(this)
                         } ?: kotlin.run {
-                            Toast.makeText(
-                                this@DashboardActivity,
-                                "Lütfen Bir Gruba Üye Olunuz!",
-                                Toast.LENGTH_LONG
-                            ).show()
+                            showToast("Grup ID Hatası!")
                         }
                     }
+                    else -> {}
                 }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
 
-                override fun onCancelled(error: DatabaseError) {}
-            })
+    private fun createGroupOperation() {
+        val grupKey = viewbinding.key.text.toString()
+
+        ref.child("gruplar")
+            .child(grupKey)
+            .child("grupKey")
+            .setValue(grupKey)
+
+        ref.child("gruplar")
+            .child(grupKey)
+            .child("grupUyeleri")
+            .child(userUID)
+            .setValue(userUID)
+
+        Intent(this@DashboardActivity, GrupActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            putExtra("grupKey", grupKey.toString())
+        }.also { _intent ->
+            startActivity(_intent)
+        }
+    }
+
+    private fun setupViewBinding() {
+        viewbinding = ActivityDashboardBinding.inflate(layoutInflater)
+        setContentView(viewbinding.root)
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
     }
 }
