@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name=".GrupActivity"></activity>
+        <activity android:name=".grup.GroupActivity"></activity>
         <activity android:name=".dashboard.DashboardActivity" />
         <activity android:name=".login.LoginActivity">
             <intent-filter>

@@ -11,6 +11,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.R
 import com.bedirhandag.harcapaylas.dashboard.DashboardActivity
 import com.bedirhandag.harcapaylas.databinding.ActivityLoginBinding
+import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_EMAIL
+import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_PASSWORD
+import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_UID
+import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERS
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_login.*
@@ -126,10 +130,11 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 showRegisterSuccessDialog()
                 var userUid = FirebaseAuth.getInstance().currentUser!!.uid
-                ref.child("users").child(userUid).child("email").setValue(emailText.text.toString())
-                ref.child("users").child(userUid).child("password")
+                ref.child(KEY_USERS).child(userUid).child(KEY_EMAIL)
+                    .setValue(emailText.text.toString())
+                ref.child(KEY_USERS).child(userUid).child(KEY_PASSWORD)
                     .setValue(passwordText.text.toString())
-                ref.child("users").child(userUid).child("uid")
+                ref.child(KEY_USERS).child(userUid).child(KEY_UID)
                     .setValue(userUid)
 
 

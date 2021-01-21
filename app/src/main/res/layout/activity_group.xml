@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_giris_background"
-    tools:context=".GrupActivity">
+    tools:context=".grup.GroupActivity">
 
     <TextView
         android:id="@+id/grupKey"

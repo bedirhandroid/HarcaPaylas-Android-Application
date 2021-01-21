@@ -30,7 +30,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:hint="@string/placeholder_email"
-            android:text="mrt@gmail.com"
             android:inputType="textEmailAddress"
             android:textAlignment="center"
             tools:ignore="Autofill" />
@@ -41,7 +40,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:hint="@string/placeholder_password"
-            android:text="mrtmrt"
             android:inputType="textPassword"
             android:textAlignment="center"
             tools:ignore="Autofill" />
