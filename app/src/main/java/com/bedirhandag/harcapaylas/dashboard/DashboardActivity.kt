@@ -1,13 +1,13 @@
 package com.bedirhandag.harcapaylas.dashboard
 
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.grup.GroupActivity
-import com.bedirhandag.harcapaylas.R
 import com.bedirhandag.harcapaylas.databinding.ActivityDashboardBinding
-import com.bedirhandag.harcapaylas.showToast
+import com.bedirhandag.harcapaylas.util.showToast
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPKEY
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPS
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUP_MEMBERS
@@ -25,7 +25,6 @@ class DashboardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dashboard)
         initFirebase()
         setupViewBinding()
         setupViewModel()
@@ -41,14 +40,13 @@ class DashboardActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.value?.let {
                         Intent(this@DashboardActivity, GroupActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                            addFlags(FLAG_ACTIVITY_NO_ANIMATION)
                             putExtra(KEY_GROUPKEY, it.toString())
                         }.also { _intent ->
                             startActivity(_intent)
                         }
                     }
                 }
-
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
@@ -96,11 +94,9 @@ class DashboardActivity : AppCompatActivity() {
                             showToast("Grup ID Hatası!")
                         }
                     }
-                    else -> {
-                    }
+                    else -> {}
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {}
         })
     }
@@ -111,12 +107,8 @@ class DashboardActivity : AppCompatActivity() {
         ref.child(KEY_GROUPS).child(grupKey).child(KEY_GROUPKEY)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    //snapshot.children.any { it.value== grupKey}.let {
-
-
                     if (snapshot.value != null && snapshot.value.toString().isNotEmpty()) {
                         showToast("Bu Grup İsmi Kullanılıyor! Lütfen Farklı Bir Giriş Deneyiniz!")
-
                     } else {
                         ref.child(KEY_GROUPS)
                             .child(grupKey)
@@ -130,15 +122,13 @@ class DashboardActivity : AppCompatActivity() {
                             .setValue(userUID)
 
                         Intent(this@DashboardActivity, GroupActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                            putExtra(KEY_GROUPKEY, grupKey.toString())
+                            addFlags(FLAG_ACTIVITY_NO_ANIMATION)
+                            putExtra(KEY_GROUPKEY, grupKey)
                         }.also { _intent ->
                             startActivity(_intent)
                         }
-
                     }
                 }
-
                 override fun onCancelled(error: DatabaseError) {}
             })
     }

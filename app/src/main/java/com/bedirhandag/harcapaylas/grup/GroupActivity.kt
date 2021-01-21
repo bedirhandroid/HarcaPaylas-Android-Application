@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.databinding.ActivityGroupBinding
-import com.bedirhandag.harcapaylas.showToast
+import com.bedirhandag.harcapaylas.util.showToast
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPKEY
 import kotlinx.android.synthetic.main.activity_group.*
 

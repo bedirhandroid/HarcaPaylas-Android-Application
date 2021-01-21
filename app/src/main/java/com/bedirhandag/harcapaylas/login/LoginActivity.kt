@@ -3,14 +3,12 @@ package com.bedirhandag.harcapaylas.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.R
 import com.bedirhandag.harcapaylas.dashboard.DashboardActivity
 import com.bedirhandag.harcapaylas.databinding.ActivityLoginBinding
+import com.bedirhandag.harcapaylas.util.showToast
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_EMAIL
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_PASSWORD
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_UID
@@ -24,7 +22,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var viewbinding: ActivityLoginBinding
     private lateinit var viewModel: LoginViewModel
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupViewBinding()
@@ -32,18 +29,13 @@ class LoginActivity : AppCompatActivity() {
         initFirebaseAuth()
         initObservers()
         initListeners()
-
-        /*if (viewModel.guncelKullanici != null) {
-            navigateToDashboard()
-        }*/
-
     }
 
     private fun initObservers() {
         viewModel.apply {
             isActionLogin.observe(this@LoginActivity, {
-                when (it) {
-                    true -> updateLoginUI()
+                when {
+                    it -> updateLoginUI()
                     else -> updateRegisterUI()
                 }
             })
@@ -87,14 +79,7 @@ class LoginActivity : AppCompatActivity() {
                     true -> loginOperation()
                     else -> registerOperation()
                 }
-            } else {
-                Toast.makeText(
-                    this@LoginActivity,
-                    "Lütfen Alanları Doldurunuz!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
+            } else showToast("Lütfen Alanları Doldurunuz!")
         }
     }
 
@@ -110,7 +95,7 @@ class LoginActivity : AppCompatActivity() {
         ).addOnCompleteListener { task ->
             if (task.isSuccessful) navigateToDashboard()
         }.addOnFailureListener { exception ->
-            Toast.makeText(applicationContext, exception.localizedMessage, Toast.LENGTH_LONG).show()
+            exception.message?.let { showToast(it) }
         }
     }
 
@@ -129,7 +114,7 @@ class LoginActivity : AppCompatActivity() {
         ).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 showRegisterSuccessDialog()
-                var userUid = FirebaseAuth.getInstance().currentUser!!.uid
+                val userUid = FirebaseAuth.getInstance().currentUser!!.uid
                 ref.child(KEY_USERS).child(userUid).child(KEY_EMAIL)
                     .setValue(emailText.text.toString())
                 ref.child(KEY_USERS).child(userUid).child(KEY_PASSWORD)
@@ -140,7 +125,7 @@ class LoginActivity : AppCompatActivity() {
 
             }
         }.addOnFailureListener { exception ->
-            Toast.makeText(applicationContext, exception.localizedMessage, Toast.LENGTH_LONG).show()
+            exception.message?.let { showToast(it) }
         }
     }
 
@@ -158,9 +143,11 @@ class LoginActivity : AppCompatActivity() {
 
     //Initialize metodlarımız
     private fun initFirebaseAuth() {
-        viewModel.auth = FirebaseAuth.getInstance()
-        viewModel.auth.currentUser?.let {
-            viewModel.guncelKullanici = it
+        viewModel.apply {
+            auth = FirebaseAuth.getInstance()
+            auth.currentUser?.let {
+                guncelKullanici = it
+            }
         }
     }
 
