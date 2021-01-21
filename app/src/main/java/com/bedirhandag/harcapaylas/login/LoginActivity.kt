@@ -29,9 +29,9 @@ class LoginActivity : AppCompatActivity() {
         initObservers()
         initListeners()
 
-        if (viewModel.guncelKullanici != null) {
+        /*if (viewModel.guncelKullanici != null) {
             navigateToDashboard()
-        }
+        }*/
 
     }
 

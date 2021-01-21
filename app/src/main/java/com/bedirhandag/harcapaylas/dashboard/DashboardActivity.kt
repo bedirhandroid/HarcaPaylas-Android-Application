@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_dashboard.*
 class DashboardActivity : AppCompatActivity() {
 
     var userUID = FirebaseAuth.getInstance().currentUser!!.uid
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
@@ -29,14 +30,23 @@ class DashboardActivity : AppCompatActivity() {
 
             var grupKey = key.text.toString()
 
-            ref.child("gruplar").child(grupKey).child("grupKey").setValue(grupKey)
+            ref.child("gruplar")
+                .child(grupKey)
+                .child("grupKey")
+                .setValue(grupKey)
 
-            ref.child("gruplar").child(grupKey).child("grupUyeleri").child(userUID)
+            ref.child("gruplar")
+                .child(grupKey)
+                .child("grupUyeleri")
+                .child(userUID)
                 .setValue(userUID)
 
-            var intent = Intent(this@DashboardActivity, GrupActivity::class.java)
-            intent.putExtra("grupKey", grupKey)
-            startActivity(intent)
+            Intent(this@DashboardActivity, GrupActivity::class.java).apply {
+                putExtra("grupKey", grupKey)
+            }.also {
+                startActivity(intent)
+            }
+
 
         }
 
@@ -75,13 +85,9 @@ class DashboardActivity : AppCompatActivity() {
                             }
                         }
                     }
-
-
                 }
 
-                override fun onCancelled(error: DatabaseError) {
-
-                }
+                override fun onCancelled(error: DatabaseError) {}
 
             })
         }
@@ -89,29 +95,20 @@ class DashboardActivity : AppCompatActivity() {
         ref.child("users").child(userUID)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(p0: DataSnapshot) {
-
                     if (p0.hasChildren()) {
-                        var uyeOlunanGrup = p0.child("hangiGrubaUye").value.toString()
-                        if (uyeOlunanGrup != "null") {
-                            var intent = Intent(this@DashboardActivity, GrupActivity::class.java)
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                            intent.putExtra("grupKey", uyeOlunanGrup)
-                            startActivity(intent)
-                        } else if (uyeOlunanGrup == "null") {
-                            Toast.makeText(
-                                this@DashboardActivity,
-                                "Lütfen Bir Gruba Üye Olunuz!",
-                                Toast.LENGTH_LONG
-                            ).show()
+                        (p0.child("hangiGrubaUye").value as String?)?.let {
+                            Intent(this@DashboardActivity, GrupActivity::class.java).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                                putExtra("grupKey", it)
+                            }.also {
+                                startActivity(intent)
+                            }
+                        } ?: kotlin.run {
+                            Toast.makeText(this@DashboardActivity, "Lütfen Bir Gruba Üye Olunuz!", Toast.LENGTH_LONG).show()
                         }
                     }
-
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-
-                }
-
+                override fun onCancelled(error: DatabaseError) {}
             })
     }
 }
