@@ -45,6 +45,7 @@ class DashboardActivity : AppCompatActivity() {
                 putExtra("grupKey", grupKey)
             }.also {
                 startActivity(intent)
+                finish()
             }
 
 
@@ -75,6 +76,7 @@ class DashboardActivity : AppCompatActivity() {
                                     Intent(this@DashboardActivity, GrupActivity::class.java)
                                 intent.putExtra("grupKey", girisGrupKey)
                                 startActivity(intent)
+                                finish()
                             } else {
                                 Toast.makeText(
                                     this@DashboardActivity,
@@ -102,12 +104,18 @@ class DashboardActivity : AppCompatActivity() {
                                 putExtra("grupKey", it)
                             }.also {
                                 startActivity(intent)
+                                finish()
                             }
                         } ?: kotlin.run {
-                            Toast.makeText(this@DashboardActivity, "Lütfen Bir Gruba Üye Olunuz!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this@DashboardActivity,
+                                "Lütfen Bir Gruba Üye Olunuz!",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 }
+
                 override fun onCancelled(error: DatabaseError) {}
             })
     }

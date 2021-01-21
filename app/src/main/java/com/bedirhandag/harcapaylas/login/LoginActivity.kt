@@ -77,9 +77,20 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startOperation() {
-        when (viewModel.isActionLogin.value) {
-            true -> loginOperation()
-            else -> registerOperation()
+        viewbinding.apply {
+            if (!emailText.text.isNullOrEmpty() && !passwordText.text.isNullOrEmpty()) {
+                when (viewModel.isActionLogin.value) {
+                    true -> loginOperation()
+                    else -> registerOperation()
+                }
+            } else {
+                Toast.makeText(
+                    this@LoginActivity,
+                    "Lütfen Alanları Doldurunuz!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
         }
     }
 
