@@ -12,11 +12,14 @@ import com.bedirhandag.harcapaylas.R
 import com.bedirhandag.harcapaylas.dashboard.DashboardActivity
 import com.bedirhandag.harcapaylas.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var viewbinding: ActivityLoginBinding
     private lateinit var viewModel: LoginViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,12 +29,16 @@ class LoginActivity : AppCompatActivity() {
         initObservers()
         initListeners()
 
+        if (viewModel.guncelKullanici != null) {
+            navigateToDashboard()
+        }
+
     }
 
     private fun initObservers() {
         viewModel.apply {
             isActionLogin.observe(this@LoginActivity, {
-                when(it) {
+                when (it) {
                     true -> updateLoginUI()
                     else -> updateRegisterUI()
                 }
@@ -70,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startOperation() {
-        when(viewModel.isActionLogin.value) {
+        when (viewModel.isActionLogin.value) {
             true -> loginOperation()
             else -> registerOperation()
         }
@@ -81,31 +88,43 @@ class LoginActivity : AppCompatActivity() {
         viewModel.isActionLogin.value = viewModel.isActionLogin.value == false
     }
 
-    private fun loginOperation(){
+    private fun loginOperation() {
         viewModel.auth.signInWithEmailAndPassword(
             viewbinding.emailText.text.toString(),
             viewbinding.passwordText.text.toString()
-        ).addOnCompleteListener { task->
-            if(task.isSuccessful) navigateToDashboard()
+        ).addOnCompleteListener { task ->
+            if (task.isSuccessful) navigateToDashboard()
         }.addOnFailureListener { exception ->
-            Toast.makeText(applicationContext,exception.localizedMessage,Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, exception.localizedMessage, Toast.LENGTH_LONG).show()
         }
     }
 
     private fun navigateToDashboard() {
-        Intent(this, DashboardActivity::class.java).also {
+        Intent(this@LoginActivity, DashboardActivity::class.java).also {
             startActivity(it)
             finish()
         }
     }
 
-    private fun registerOperation(){
-        viewModel.auth.createUserWithEmailAndPassword(viewbinding.emailText.text.toString(), viewbinding.passwordText.text.toString()).addOnCompleteListener { task ->
-            if(task.isSuccessful){
+    var ref = FirebaseDatabase.getInstance().reference
+    private fun registerOperation() {
+        viewModel.auth.createUserWithEmailAndPassword(
+            viewbinding.emailText.text.toString(),
+            viewbinding.passwordText.text.toString()
+        ).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
                 showRegisterSuccessDialog()
+                var userUid = FirebaseAuth.getInstance().currentUser!!.uid
+                ref.child("users").child(userUid).child("email").setValue(emailText.text.toString())
+                ref.child("users").child(userUid).child("password")
+                    .setValue(passwordText.text.toString())
+                ref.child("users").child(userUid).child("uid")
+                    .setValue(userUid)
+
+
             }
         }.addOnFailureListener { exception ->
-            Toast.makeText(applicationContext,exception.localizedMessage,Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, exception.localizedMessage, Toast.LENGTH_LONG).show()
         }
     }
 
@@ -124,6 +143,9 @@ class LoginActivity : AppCompatActivity() {
     //Initialize metodlarımız
     private fun initFirebaseAuth() {
         viewModel.auth = FirebaseAuth.getInstance()
+        viewModel.auth.currentUser?.let {
+            viewModel.guncelKullanici = it
+        }
     }
 
     private fun setupViewModel() {
