@@ -10,4 +10,6 @@
     <string name="register">Kayıt Ol</string>
     <string name="second_register">Hemen Kayıt Ol!</string>
     <string name="second_login">Giriş Yap!</string>
+
+    <string name="placeholder_group_item_title">%s</string>
 </resources>

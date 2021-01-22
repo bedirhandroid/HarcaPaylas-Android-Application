@@ -4,7 +4,11 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.ViewModelProvider
+import com.bedirhandag.harcapaylas.adapter.GroupsAdapter
 import com.bedirhandag.harcapaylas.grup.GroupActivity
 import com.bedirhandag.harcapaylas.databinding.ActivityDashboardBinding
 import com.bedirhandag.harcapaylas.util.showToast
@@ -13,6 +17,7 @@ import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPS
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUP_MEMBERS
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERS
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_WHICH_GROUP
+import com.bedirhandag.harcapaylas.util.applyDivider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -20,6 +25,7 @@ class DashboardActivity : AppCompatActivity() {
 
     private lateinit var viewbinding: ActivityDashboardBinding
     private lateinit var viewModel: DashboardViewModel
+    private lateinit var groupsAdapter: GroupsAdapter
     lateinit var userUID: String
     lateinit var ref: DatabaseReference
 
@@ -28,25 +34,45 @@ class DashboardActivity : AppCompatActivity() {
         initFirebase()
         setupViewBinding()
         setupViewModel()
+        initObservers()
         initListeners()
-        checkHasGroup()
+        getJoinedGroups()
     }
 
-    private fun checkHasGroup() {
+    private fun initObservers() {
+        viewModel.apply {
+            joinedGroups.observe(this@DashboardActivity, {
+                initAdapter()
+            })
+        }
+    }
+
+    private fun initAdapter() {
+        viewbinding.recyclerView.apply {
+            viewModel.joinedGroups.value?.let {
+                groupsAdapter = GroupsAdapter(it) {
+                    Intent(this@DashboardActivity, GroupActivity::class.java).apply {
+                        addFlags(FLAG_ACTIVITY_NO_ANIMATION)
+                        putExtra(KEY_GROUPKEY, it)
+                    }.also { _intent ->
+                        startActivity(_intent)
+                    }
+                }
+                adapter = groupsAdapter
+                applyDivider()
+            }
+        }
+    }
+
+    private fun getJoinedGroups() {
         ref.child(KEY_USERS)
             .child(userUID)
             .child(KEY_WHICH_GROUP)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    snapshot.value?.let {
-                        Intent(this@DashboardActivity, GroupActivity::class.java).apply {
-                            addFlags(FLAG_ACTIVITY_NO_ANIMATION)
-                            putExtra(KEY_GROUPKEY, it.toString())
-                        }.also { _intent ->
-                            startActivity(_intent)
-                        }
-                    }
+                    viewModel.joinedGroups.value = (snapshot.value as ArrayList<String>)
                 }
+
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
@@ -59,46 +85,7 @@ class DashboardActivity : AppCompatActivity() {
     private fun initListeners() {
         viewbinding.apply {
             btnGrupKur.setOnClickListener { createGroupOperation() }
-            btnGirisGrup.setOnClickListener { joinGroupOperation() }
         }
-    }
-
-    private fun joinGroupOperation() {
-        val girisGrupKey = viewbinding.etGrupGirisKey.text.toString()
-
-        ref.child(KEY_GROUPS).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
-                when {
-                    p0.hasChildren() -> {
-                        p0.children.find { it.key.toString() == girisGrupKey }?.let {
-
-                            ref.child(KEY_GROUPS)
-                                .child(girisGrupKey)
-                                .child(KEY_GROUP_MEMBERS)
-                                .child(userUID)
-                                .setValue(userUID)
-
-                            ref.child(KEY_USERS)
-                                .child(userUID)
-                                .child(KEY_WHICH_GROUP)
-                                .setValue(girisGrupKey)
-
-                            Intent(this@DashboardActivity, GroupActivity::class.java).apply {
-                                putExtra(KEY_GROUPKEY, girisGrupKey)
-                            }.also { _intent ->
-                                startActivity(_intent)
-                            }
-
-                            ref.removeEventListener(this)
-                        } ?: kotlin.run {
-                            showToast("Grup ID Hatası!")
-                        }
-                    }
-                    else -> {}
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {}
-        })
     }
 
     private fun createGroupOperation() {
@@ -121,16 +108,38 @@ class DashboardActivity : AppCompatActivity() {
                             .child(userUID)
                             .setValue(userUID)
 
-                        Intent(this@DashboardActivity, GroupActivity::class.java).apply {
-                            addFlags(FLAG_ACTIVITY_NO_ANIMATION)
-                            putExtra(KEY_GROUPKEY, grupKey)
-                        }.also { _intent ->
-                            startActivity(_intent)
-                        }
+                        updateFirebaseWithJoinedGroup(grupKey)
+                        groupsAdapter.addItem(grupKey)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            Intent(this@DashboardActivity, GroupActivity::class.java).apply {
+                                addFlags(FLAG_ACTIVITY_NO_ANIMATION)
+                                putExtra(KEY_GROUPKEY, grupKey)
+                            }.also { _intent ->
+                                viewbinding.key.setText(String())
+                                startActivity(_intent)
+                            }
+                        },500)
                     }
                 }
+
                 override fun onCancelled(error: DatabaseError) {}
             })
+    }
+
+    private fun updateFirebaseWithJoinedGroup(groupKey: String) {
+        arrayListOf<String>().apply {
+            viewModel.joinedGroups.value?.let {
+                it.forEach {  _value ->
+                    add(_value)
+                }
+            }
+            add(groupKey)
+        }.also {
+            ref.child(KEY_USERS)
+                .child(userUID)
+                .child(KEY_WHICH_GROUP)
+                .setValue(it)
+        }
     }
 
     private fun setupViewBinding() {
