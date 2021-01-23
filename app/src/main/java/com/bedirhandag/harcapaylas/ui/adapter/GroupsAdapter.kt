@@ -10,7 +10,8 @@ import com.bedirhandag.harcapaylas.R
 
 class GroupsAdapter(
     private val itemList: ArrayList<String>,
-    private val onItemClickListener: (key: String) -> Unit
+    private val onItemClickListener: (key: String) -> Unit,
+    private val onItemLongClickListener: (key: String) -> Unit
 ): RecyclerView.Adapter<GroupsAdapter.PostHolder>() {
 
     fun updateList(newList: ArrayList<String>){
@@ -42,6 +43,10 @@ class GroupsAdapter(
         holder.title?.run {
             text = context.resources.getString(R.string.placeholder_group_item_title, itemList[position])
             holder.itemView.setOnClickListener { onItemClickListener(itemList[position]) }
+            holder.itemView.setOnLongClickListener {
+                onItemLongClickListener(itemList[position])
+                true
+            }
         }
     }
 

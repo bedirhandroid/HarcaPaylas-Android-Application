@@ -62,9 +62,15 @@ class DashboardActivity : AppCompatActivity() {
     private fun initAdapter() {
         viewbinding.recyclerView.apply {
             viewModel.joinedGroups.value?.let {
-                groupsAdapter = GroupsAdapter(it) { _key ->
-                    navigateToGroupActivity(_key)
-                }
+                groupsAdapter = GroupsAdapter(
+                    it,
+                    { _clickedItem ->
+                        navigateToGroupActivity(_clickedItem)
+                    },
+                    { _longClickedItem ->
+                        //Todo : Bedo uzun basıldığında itemi firebase'den silelim
+                    }
+                )
                 adapter = groupsAdapter
                 applyDivider()
             }
