@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_group.*
+import kotlinx.android.synthetic.main.app_toolbar.*
 
 class GroupActivity : AppCompatActivity() {
 
@@ -23,14 +24,18 @@ class GroupActivity : AppCompatActivity() {
         initFirebase()
         setupViewBinding()
         setupViewModel()
-        getGrupKey()
+        initToolbar()
     }
 
-    private fun getGrupKey() {
-        intent.getStringExtra(KEY_GROUPKEY)?.let {
-            grupKey.text = it
-            this.showToast("$it Grubuna Hoşgeldin!")
+    private fun initToolbar() {
+        viewbinding.activityAppBar.apply {
+            intent.getStringExtra(KEY_GROUPKEY)?.let {
+                pageTitle.text = it
+                this@GroupActivity.showToast("$it Grubuna Hoşgeldin!")
+            }
         }
+
+
     }
 
     private fun initFirebase() {

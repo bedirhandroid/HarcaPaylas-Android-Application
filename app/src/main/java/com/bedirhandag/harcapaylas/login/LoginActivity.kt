@@ -26,9 +26,15 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setupViewBinding()
         setupViewModel()
+        checkSession()
         initFirebaseAuth()
         initObservers()
         initListeners()
+
+    }
+
+    private fun checkSession() {
+
     }
 
     private fun initObservers() {
