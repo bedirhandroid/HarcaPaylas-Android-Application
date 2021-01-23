@@ -5,12 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="12dp"
     tools:context=".dashboard.DashboardActivity">
+
+    <include
+        android:id="@+id/dashboardAppBar"
+        layout="@layout/app_main_toolbar"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="12dp"
         android:background="@drawable/grey_bg_border_white"
         android:padding="10dp">
 
@@ -18,10 +22,19 @@
             android:id="@+id/key"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="6dp"
             android:hint="Grup key giriniz"
-            app:layout_constraintEnd_toStartOf="@+id/btnGrupKur"
+            app:layout_constraintEnd_toStartOf="@+id/btnGrubaKatil"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btnGrubaKatil"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Katıl"
+            app:layout_constraintEnd_toStartOf="@+id/btnGrupKur"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
@@ -29,14 +42,16 @@
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Grup Kur"
+            android:text="Yeni Grup"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
-        android:layout_marginTop="12dp"
         android:padding="10dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
         android:orientation="vertical"
         android:background="@drawable/grey_bg_border_white"
         android:layout_width="match_parent"

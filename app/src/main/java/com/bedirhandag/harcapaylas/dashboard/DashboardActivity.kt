@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.adapter.GroupsAdapter
 import com.bedirhandag.harcapaylas.grup.GroupActivity
 import com.bedirhandag.harcapaylas.databinding.ActivityDashboardBinding
+import com.bedirhandag.harcapaylas.login.LoginActivity
 import com.bedirhandag.harcapaylas.util.showToast
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPKEY
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPS
@@ -34,9 +35,21 @@ class DashboardActivity : AppCompatActivity() {
         initFirebase()
         setupViewBinding()
         setupViewModel()
+        initToolbar()
         initObservers()
         initListeners()
         getJoinedGroups()
+    }
+
+    private fun initToolbar() {
+        viewbinding.dashboardAppBar.apply {
+            pageTitle.text = "HarcaPaylaş"
+            logout.setOnClickListener {
+                Intent(this@DashboardActivity, LoginActivity::class.java).also { _intent ->
+                    startActivity(_intent)
+                }
+            }
+        }
     }
 
     private fun initObservers() {
@@ -50,13 +63,8 @@ class DashboardActivity : AppCompatActivity() {
     private fun initAdapter() {
         viewbinding.recyclerView.apply {
             viewModel.joinedGroups.value?.let {
-                groupsAdapter = GroupsAdapter(it) {
-                    Intent(this@DashboardActivity, GroupActivity::class.java).apply {
-                        addFlags(FLAG_ACTIVITY_NO_ANIMATION)
-                        putExtra(KEY_GROUPKEY, it)
-                    }.also { _intent ->
-                        startActivity(_intent)
-                    }
+                groupsAdapter = GroupsAdapter(it) { _key ->
+                    navigateToGroupActivity(_key)
                 }
                 adapter = groupsAdapter
                 applyDivider()
@@ -85,6 +93,24 @@ class DashboardActivity : AppCompatActivity() {
     private fun initListeners() {
         viewbinding.apply {
             btnGrupKur.setOnClickListener { createGroupOperation() }
+            btnGrubaKatil.setOnClickListener { joinGroupOperation() }
+        }
+    }
+
+    private fun joinGroupOperation() {
+        viewModel.joinedGroups.value?.find { it == viewbinding.key.text.toString() }?.let {
+            navigateToGroupActivity(it)
+        } ?: kotlin.run {
+            showToast("Grup bulunamadı!")
+        }
+    }
+
+    private fun navigateToGroupActivity(groupKey: String) {
+        Intent(this@DashboardActivity, GroupActivity::class.java).apply {
+            addFlags(FLAG_ACTIVITY_NO_ANIMATION)
+            putExtra(KEY_GROUPKEY, groupKey)
+        }.also { _intent ->
+            startActivity(_intent)
         }
     }
 
