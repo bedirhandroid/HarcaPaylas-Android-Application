@@ -1,4 +1,4 @@
-package com.bedirhandag.harcapaylas.adapter
+package com.bedirhandag.harcapaylas.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View

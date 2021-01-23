@@ -1,4 +1,4 @@
-package com.bedirhandag.harcapaylas.grup
+package com.bedirhandag.harcapaylas.ui.activity.grup
 
 import androidx.lifecycle.ViewModel
 

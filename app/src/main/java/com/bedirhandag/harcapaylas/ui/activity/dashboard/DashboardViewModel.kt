@@ -1,4 +1,4 @@
-package com.bedirhandag.harcapaylas.dashboard
+package com.bedirhandag.harcapaylas.ui.activity.dashboard
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

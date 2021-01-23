@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="30dp"
-    tools:context=".login.LoginActivity">
+    tools:context=".ui.activity.login.LoginActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:text="@string/welcome"
             android:textAllCaps="true"
             android:textSize="35sp"
-            android:textColor="#182B8F"
+            android:textColor="@color/facebook_blue"
             android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,8 +48,8 @@
             android:layout_width="match_parent"
             android:layout_marginTop="15dp"
             android:layout_height="0dp"
-            android:background="#182B8F"
-            android:textColor="#FFFFFF"
+            android:background="@color/facebook_blue"
+            android:textColor="@color/md_white_1000"
             android:layout_weight="1"
             android:layout_marginEnd="2.5dp"
             android:text="@string/login"
@@ -58,7 +58,7 @@
             android:id="@+id/btnChangeAction"
             android:text="@string/second_register"
             android:layout_marginTop="15dp"
-            android:textColor="#182B8F"
+            android:textColor="@color/facebook_blue"
             android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="50dp"

@@ -1,4 +1,4 @@
-package com.bedirhandag.harcapaylas.login
+package com.bedirhandag.harcapaylas.ui.activity.login
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

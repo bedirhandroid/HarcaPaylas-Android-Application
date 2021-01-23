@@ -1,4 +1,4 @@
-package com.bedirhandag.harcapaylas.login
+package com.bedirhandag.harcapaylas.ui.activity.login
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.R
-import com.bedirhandag.harcapaylas.dashboard.DashboardActivity
+import com.bedirhandag.harcapaylas.ui.activity.dashboard.DashboardActivity
 import com.bedirhandag.harcapaylas.databinding.ActivityLoginBinding
 import com.bedirhandag.harcapaylas.util.showToast
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_EMAIL
@@ -26,15 +26,14 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setupViewBinding()
         setupViewModel()
-        checkSession()
         initFirebaseAuth()
         initObservers()
         initListeners()
-
+        checkSession()
     }
 
     private fun checkSession() {
-
+        viewModel.auth.currentUser?.let { navigateToDashboard() }
     }
 
     private fun initObservers() {

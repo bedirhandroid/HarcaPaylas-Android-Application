@@ -1,4 +1,4 @@
-package com.bedirhandag.harcapaylas.dashboard
+package com.bedirhandag.harcapaylas.ui.activity.dashboard
 
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION
@@ -6,12 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.ViewModelProvider
-import com.bedirhandag.harcapaylas.adapter.GroupsAdapter
-import com.bedirhandag.harcapaylas.grup.GroupActivity
+import com.bedirhandag.harcapaylas.ui.adapter.GroupsAdapter
+import com.bedirhandag.harcapaylas.ui.activity.grup.GroupActivity
 import com.bedirhandag.harcapaylas.databinding.ActivityDashboardBinding
-import com.bedirhandag.harcapaylas.login.LoginActivity
+import com.bedirhandag.harcapaylas.ui.activity.login.LoginActivity
 import com.bedirhandag.harcapaylas.util.showToast
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPKEY
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPS

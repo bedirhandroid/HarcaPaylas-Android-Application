@@ -1,5 +1,6 @@
-package com.bedirhandag.harcapaylas.grup
+package com.bedirhandag.harcapaylas.ui.activity.grup
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
@@ -9,8 +10,6 @@ import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPKEY
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.android.synthetic.main.activity_group.*
-import kotlinx.android.synthetic.main.app_toolbar.*
 
 class GroupActivity : AppCompatActivity() {
 
@@ -25,6 +24,17 @@ class GroupActivity : AppCompatActivity() {
         setupViewBinding()
         setupViewModel()
         initToolbar()
+        initListener()
+    }
+
+    private fun initListener() {
+        viewbinding.apply {
+            addReport.setOnClickListener { showAddReportPopup() }
+        }
+    }
+
+    private fun showAddReportPopup() {
+
     }
 
     private fun initToolbar() {
