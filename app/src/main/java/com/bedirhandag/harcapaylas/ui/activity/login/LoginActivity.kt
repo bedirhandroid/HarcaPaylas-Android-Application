@@ -3,7 +3,6 @@ package com.bedirhandag.harcapaylas.ui.activity.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.R
 import com.bedirhandag.harcapaylas.ui.activity.dashboard.DashboardActivity
@@ -13,6 +12,7 @@ import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_EMAIL
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_PASSWORD
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_UID
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERS
+import com.bedirhandag.harcapaylas.util.showAlert
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_login.*
@@ -135,15 +135,14 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showRegisterSuccessDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Kayıt Başarılı!")
-            .setMessage("Başarılı bir şekilde kayıt oldunuz. Lütfen giriş yapınız!")
-            .setCancelable(false)
-            .setPositiveButton("Tamam") { _, _ ->
-                viewModel.isActionLogin.value = true
-            }
-            .create()
-            .show()
+        showAlert(
+            context = this,
+            title = getString(R.string.register_success_title),
+            msg = getString(R.string.register_success_message),
+            iconResId = R.drawable.ic_tick
+        ) {
+            viewModel.isActionLogin.value = true
+        }
     }
 
     //Initialize metodlarımız

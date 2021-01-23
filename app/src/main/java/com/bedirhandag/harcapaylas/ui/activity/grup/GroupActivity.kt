@@ -1,34 +1,75 @@
 package com.bedirhandag.harcapaylas.ui.activity.grup
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.R
 import com.bedirhandag.harcapaylas.databinding.ActivityGroupBinding
+import com.bedirhandag.harcapaylas.model.ReportModel
+import com.bedirhandag.harcapaylas.ui.adapter.GroupsAdapter
 import com.bedirhandag.harcapaylas.ui.fragment.addreport.AddReportFragment
 import com.bedirhandag.harcapaylas.util.showToast
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPKEY
+import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPS
+import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_REPORTS
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import kotlinx.android.synthetic.main.activity_group.view.*
+import com.google.firebase.database.*
 
 class GroupActivity : AppCompatActivity() {
 
     private lateinit var viewbinding: ActivityGroupBinding
     private lateinit var viewModel: GroupViewModel
-    lateinit var userUID: String
-    lateinit var ref: DatabaseReference
+    private lateinit var groupsAdapter: GroupsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initFirebase()
-        setupViewBinding()
         setupViewModel()
+        getArgParams()
+        setupViewBinding()
+        initFirebase()
+        initObservers()
         initToolbar()
         initListener()
+        getReports()
+    }
+
+    private fun initObservers() {
+        viewModel.apply {
+            reportList.observe(this@GroupActivity, {
+                initAdapter()
+            })
+        }
+    }
+
+    private fun initAdapter() {
+        /*viewbinding.recyclerView.apply {
+            viewModel.reportList.value?.let {
+                groupsAdapter = GroupsAdapter(it) { }
+                adapter = groupsAdapter
+                applyDivider()
+            }
+        }*/
+    }
+
+    private fun getReports() {
+        viewModel.ref.child(KEY_GROUPS)
+            .child(viewModel.groupKey)
+            .child(KEY_REPORTS)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.value?.let {
+                        viewModel.reportList.value = (it as ArrayList<HashMap<String, ReportModel>>)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    private fun getArgParams() {
+        intent.getStringExtra(KEY_GROUPKEY)?.let {
+            viewModel.groupKey = it
+        }
     }
 
     private fun initListener() {
@@ -38,32 +79,25 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun showAddReportPopup() {
-        val manager = supportFragmentManager.beginTransaction()
-
-        manager.add(
-            R.id.fragmentContainer,
-            AddReportFragment.newInstance(),
-            AddReportFragment::class.java.simpleName
-        )
-        manager.addToBackStack(null)
-        manager.commit()
-
+        supportFragmentManager.beginTransaction().apply {
+            add(
+                R.id.fragmentContainer,
+                AddReportFragment.newInstance(viewModel.groupKey),
+                AddReportFragment::class.java.simpleName
+            ).commit()
+        }
     }
 
     private fun initToolbar() {
         viewbinding.activityAppBar.apply {
-            intent.getStringExtra(KEY_GROUPKEY)?.let {
-                pageTitle.text = it
-                this@GroupActivity.showToast("$it Grubuna Hoşgeldin!")
-            }
+            pageTitle.text = viewModel.groupKey
+            this@GroupActivity.showToast("${viewModel.groupKey} Grubuna Hoşgeldin!")
         }
-
-
     }
 
     private fun initFirebase() {
-        ref = FirebaseDatabase.getInstance().reference
-        FirebaseAuth.getInstance().currentUser?.uid?.let { userUID = it }
+        viewModel.ref = FirebaseDatabase.getInstance().reference
+        FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.userUID = it }
     }
 
     private fun setupViewModel() {

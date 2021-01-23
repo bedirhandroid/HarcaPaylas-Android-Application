@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="@color/md_white_1000"
     tools:context=".ui.fragment.addreport.AddReportFragment">
 
     <include
@@ -99,8 +100,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="20dp"
+        android:gravity="center_horizontal"
         android:textColor="@color/md_grey_600"
-        android:text="@string/add_report_info_message"
+        android:text="@string/add_report_warning_message"
         app:layout_constraintTop_toBottomOf="@+id/priceFrame"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

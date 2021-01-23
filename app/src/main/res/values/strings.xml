@@ -13,5 +13,13 @@
 
     <string name="placeholder_group_item_title">%s</string>
 
-    <string name="add_report_info_message">Harcama bildirimi eklemek için açıklama ve tutar bilgilerini eksiksiz doldurmalısınız!</string>
+    <string name="ok">Tamam</string>
+    <string name="cancel">İptal</string>
+
+    <string name="add_report_warning_title">Bilgiler Eksik</string>
+    <string name="add_report_warning_message">Harcama bildirimi eklemek için açıklama ve tutar bilgilerini eksiksiz doldurmalısınız!</string>
+    <string name="add_report_success_title">İşlem Başarılı!</string>
+    <string name="add_report_success_message">Harcama bildirimi başarıyla eklendi!</string>
+    <string name="register_success_title">Kayıt Başarılı!</string>
+    <string name="register_success_message">Başarılı bir şekilde kayıt oldunuz. Lütfen giriş yapınız!</string>
 </resources>

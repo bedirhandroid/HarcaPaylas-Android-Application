@@ -77,7 +77,9 @@ class DashboardActivity : AppCompatActivity() {
             .child(KEY_WHICH_GROUP)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    viewModel.joinedGroups.value = (snapshot.value as ArrayList<String>)
+                    snapshot.value?.let {
+                        viewModel.joinedGroups.value = (it as ArrayList<String>)
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {}

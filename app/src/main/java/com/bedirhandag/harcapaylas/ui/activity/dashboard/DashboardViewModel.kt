@@ -5,5 +5,5 @@ import androidx.lifecycle.ViewModel
 
 class DashboardViewModel : ViewModel() {
 
-    val joinedGroups = MutableLiveData<ArrayList<String>>()
+    val joinedGroups = MutableLiveData<ArrayList<String>>().also { it.value = arrayListOf() }
 }
