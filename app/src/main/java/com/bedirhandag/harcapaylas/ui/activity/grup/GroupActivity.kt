@@ -3,13 +3,17 @@ package com.bedirhandag.harcapaylas.ui.activity.grup
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
+import com.bedirhandag.harcapaylas.R
 import com.bedirhandag.harcapaylas.databinding.ActivityGroupBinding
+import com.bedirhandag.harcapaylas.ui.fragment.addreport.AddReportFragment
 import com.bedirhandag.harcapaylas.util.showToast
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPKEY
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.activity_group.view.*
 
 class GroupActivity : AppCompatActivity() {
 
@@ -34,6 +38,15 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun showAddReportPopup() {
+        val manager = supportFragmentManager.beginTransaction()
+
+        manager.add(
+            R.id.fragmentContainer,
+            AddReportFragment.newInstance(),
+            AddReportFragment::class.java.simpleName
+        )
+        manager.addToBackStack(null)
+        manager.commit()
 
     }
 

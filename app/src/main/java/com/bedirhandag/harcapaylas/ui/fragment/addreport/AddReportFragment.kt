@@ -23,7 +23,6 @@ class AddReportFragment : Fragment() {
         setupViewModel()
         initToolbar()
     }
-
     private fun initToolbar() {
         viewBinding.addReportAppBar.apply {
             pageTitle.text = "Harcama Bildir"
