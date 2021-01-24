@@ -3,6 +3,7 @@ package com.bedirhandag.harcapaylas.util
 object FirebaseKeys {
     const val KEY_USERS = "users"
     const val KEY_EMAIL = "email"
+    const val KEY_USERNAME = "username"
     const val KEY_PASSWORD = "password"
     const val KEY_WHICH_GROUP = "joinedGroups"
     const val KEY_GROUPKEY = "groupKey"

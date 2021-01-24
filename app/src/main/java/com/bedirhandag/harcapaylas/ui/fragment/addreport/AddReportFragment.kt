@@ -11,10 +11,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.R
 import com.bedirhandag.harcapaylas.databinding.FragmentAddReportBinding
 import com.bedirhandag.harcapaylas.model.ReportModel
+import com.bedirhandag.harcapaylas.util.*
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPKEY
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPS
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_REPORTS
-import com.bedirhandag.harcapaylas.util.showAlert
+import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERNAME
+import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERS
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -39,6 +41,7 @@ class AddReportFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupViewModel()
         initFirebase()
+        getUsername()
         initToolbar()
         initListener()
         getArgParams()
@@ -71,6 +74,23 @@ class AddReportFragment : Fragment() {
         FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.userUID = it }
     }
 
+    private fun getUsername() {
+        viewModel.apply {
+            ref.child(KEY_USERS)
+                .child(userUID)
+                .child(KEY_USERNAME)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        snapshot.value?.let {
+                            username = it.toString()
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {}
+                })
+        }
+    }
+
     private fun initListener() {
         viewBinding.apply {
             btnAddReport.setOnClickListener { addReportOperation() }
@@ -88,7 +108,8 @@ class AddReportFragment : Fragment() {
     }
 
     private fun backButtonOperation() {
-        requireActivity().supportFragmentManager.beginTransaction().remove(this@AddReportFragment).commit()
+        requireActivity().supportFragmentManager.beginTransaction().remove(this@AddReportFragment)
+            .commit()
     }
 
     private fun addReportOperation() {
@@ -105,6 +126,7 @@ class AddReportFragment : Fragment() {
                 else -> {
                     val reportModel = ReportModel(
                         viewModel.userUID,
+                        viewModel.username,
                         edtDesc.text.toString(),
                         edtPrice.text.toString()
                     )
@@ -123,6 +145,7 @@ class AddReportFragment : Fragment() {
                         msg = getString(R.string.add_report_success_message),
                         iconResId = R.drawable.ic_tick
                     ) {
+                        addReportComplete?.isCompleted(reportModel)
                         backButtonOperation()
                     }
                 }
@@ -132,7 +155,7 @@ class AddReportFragment : Fragment() {
 
     private fun initToolbar() {
         viewBinding.addReportAppBar.apply {
-            pageTitle.text = "Harcama Bildir"
+            pageTitle.text = getString(R.string.placeholder_add_report)
         }
     }
 
@@ -141,7 +164,9 @@ class AddReportFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(groupKey: String): AddReportFragment{
+        var addReportComplete: AddReportCompleteListener? = null
+        fun newInstance(groupKey: String, AddReportCompleteListener: AddReportCompleteListener): AddReportFragment {
+            addReportComplete = AddReportCompleteListener
             val addReportFragment = AddReportFragment()
             addReportFragment.arguments = bundleOf(KEY_GROUPKEY to groupKey)
             return addReportFragment

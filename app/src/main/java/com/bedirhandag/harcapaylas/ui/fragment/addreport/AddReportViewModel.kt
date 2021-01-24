@@ -10,5 +10,6 @@ class AddReportViewModel : ViewModel() {
     lateinit var groupKey: String
     lateinit var ref: DatabaseReference
     lateinit var userUID: String
+    lateinit var username: String
 
 }

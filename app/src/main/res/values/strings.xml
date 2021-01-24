@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">HarcaPaylas</string>
 
-    <string name="welcome">Hoşgeldiniz!</string>
+    <string name="welcome_username">Hoşgeldin %s</string>
 
     <string name="placeholder_email">E-Posta Giriniz</string>
+    <string name="placeholder_username">Takma Ad Giriniz</string>
     <string name="placeholder_password">Şifre Giriniz</string>
 
     <string name="login">Giriş Yap</string>
@@ -11,7 +12,15 @@
     <string name="second_register">Hemen Kayıt Ol!</string>
     <string name="second_login">Giriş Yap!</string>
 
+    <string name="enter_group_name">Grup adı giriniz..</string>
+    <string name="join">Katıl</string>
+    <string name="new_group">Yeni Grup</string>
+    <string name="my_groups">Gruplarım :</string>
+    <string name="placeholder_add_report">Harcama Bildir</string>
+
     <string name="placeholder_group_item_title">%s</string>
+    <string name="placeholder_price">₺%s</string>
+    <string name="placeholder_group">Grup : %s</string>
 
     <string name="ok">Tamam</string>
     <string name="cancel">İptal</string>

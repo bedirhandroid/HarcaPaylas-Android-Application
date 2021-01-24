@@ -1,4 +1,4 @@
-package com.bedirhandag.harcapaylas.ui.activity.grup
+package com.bedirhandag.harcapaylas.ui.activity.group
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,12 +6,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.R
 import com.bedirhandag.harcapaylas.databinding.ActivityGroupBinding
 import com.bedirhandag.harcapaylas.model.ReportModel
-import com.bedirhandag.harcapaylas.ui.adapter.GroupsAdapter
+import com.bedirhandag.harcapaylas.ui.adapter.ReportsAdapter
 import com.bedirhandag.harcapaylas.ui.fragment.addreport.AddReportFragment
 import com.bedirhandag.harcapaylas.util.showToast
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPKEY
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPS
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_REPORTS
+import com.bedirhandag.harcapaylas.util.AddReportCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -19,7 +20,13 @@ class GroupActivity : AppCompatActivity() {
 
     private lateinit var viewbinding: ActivityGroupBinding
     private lateinit var viewModel: GroupViewModel
-    private lateinit var groupsAdapter: GroupsAdapter
+    private lateinit var reportsAdapter: ReportsAdapter
+
+    private val isCompletedListener = object: AddReportCompleteListener{
+        override fun isCompleted(reportModel: ReportModel) {
+            reportsAdapter.addItem(reportModel)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,13 +49,12 @@ class GroupActivity : AppCompatActivity() {
     }
 
     private fun initAdapter() {
-        /*viewbinding.recyclerView.apply {
+        viewbinding.recyclerView.apply {
             viewModel.reportList.value?.let {
-                groupsAdapter = GroupsAdapter(it) { }
-                adapter = groupsAdapter
-                applyDivider()
+                reportsAdapter = ReportsAdapter(it, {}, {})
+                adapter = reportsAdapter
             }
-        }*/
+        }
     }
 
     private fun getReports() {
@@ -58,7 +64,7 @@ class GroupActivity : AppCompatActivity() {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.value?.let {
-                        viewModel.reportList.value = (it as ArrayList<HashMap<String, ReportModel>>)
+                        viewModel.convertToReportModelList((it as ArrayList<HashMap<String, String>>))
                     }
                 }
 
@@ -82,7 +88,7 @@ class GroupActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().apply {
             add(
                 R.id.fragmentContainer,
-                AddReportFragment.newInstance(viewModel.groupKey),
+                AddReportFragment.newInstance(viewModel.groupKey, isCompletedListener),
                 AddReportFragment::class.java.simpleName
             ).commit()
         }
@@ -90,7 +96,7 @@ class GroupActivity : AppCompatActivity() {
 
     private fun initToolbar() {
         viewbinding.activityAppBar.apply {
-            pageTitle.text = viewModel.groupKey
+            pageTitle.text = getString(R.string.placeholder_group, viewModel.groupKey)
             this@GroupActivity.showToast("${viewModel.groupKey} Grubuna Hoşgeldin!")
         }
     }

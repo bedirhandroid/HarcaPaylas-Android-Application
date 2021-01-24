@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name="com.bedirhandag.harcapaylas.ui.activity.grup.GroupActivity"/>
+        <activity android:name="com.bedirhandag.harcapaylas.ui.activity.group.GroupActivity"/>
         <activity android:name="com.bedirhandag.harcapaylas.ui.activity.dashboard.DashboardActivity" />
         <activity android:name="com.bedirhandag.harcapaylas.ui.activity.login.LoginActivity">
             <intent-filter>

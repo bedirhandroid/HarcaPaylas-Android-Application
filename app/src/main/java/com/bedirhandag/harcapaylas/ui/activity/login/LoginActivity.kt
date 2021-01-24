@@ -11,16 +11,19 @@ import com.bedirhandag.harcapaylas.util.showToast
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_EMAIL
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_PASSWORD
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_UID
+import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERNAME
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERS
+import com.bedirhandag.harcapaylas.util.gone
 import com.bedirhandag.harcapaylas.util.showAlert
+import com.bedirhandag.harcapaylas.util.visible
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var viewbinding: ActivityLoginBinding
     private lateinit var viewModel: LoginViewModel
+    var ref = FirebaseDatabase.getInstance().reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +53,7 @@ class LoginActivity : AppCompatActivity() {
     private fun clearUI() {
         viewbinding.apply {
             emailText.setText("mrt@gmail.com")
+            usernameText.setText("mrtcnkb")
             passwordText.setText("mrtmrt")
         }
     }
@@ -57,6 +61,7 @@ class LoginActivity : AppCompatActivity() {
     private fun updateLoginUI() {
         viewbinding.apply {
             clearUI()
+            usernameText.gone()
             btnAction.text = getString(R.string.login)
             btnChangeAction.text = getString(R.string.second_register)
         }
@@ -65,6 +70,7 @@ class LoginActivity : AppCompatActivity() {
     private fun updateRegisterUI() {
         viewbinding.apply {
             clearUI()
+            usernameText.visible()
             btnAction.text = getString(R.string.register)
             btnChangeAction.text = getString(R.string.second_login)
         }
@@ -79,7 +85,9 @@ class LoginActivity : AppCompatActivity() {
 
     private fun startOperation() {
         viewbinding.apply {
-            if (!emailText.text.isNullOrEmpty() && !passwordText.text.isNullOrEmpty()) {
+            if (!emailText.text.isNullOrBlank()
+                && !passwordText.text.isNullOrBlank()
+                && !usernameText.text.isNullOrBlank()) {
                 when (viewModel.isActionLogin.value) {
                     true -> loginOperation()
                     else -> registerOperation()
@@ -111,26 +119,29 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    var ref = FirebaseDatabase.getInstance().reference
     private fun registerOperation() {
-        viewModel.auth.createUserWithEmailAndPassword(
-            viewbinding.emailText.text.toString(),
-            viewbinding.passwordText.text.toString()
-        ).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                showRegisterSuccessDialog()
-                val userUid = FirebaseAuth.getInstance().currentUser!!.uid
-                ref.child(KEY_USERS).child(userUid).child(KEY_EMAIL)
-                    .setValue(emailText.text.toString())
-                ref.child(KEY_USERS).child(userUid).child(KEY_PASSWORD)
-                    .setValue(passwordText.text.toString())
-                ref.child(KEY_USERS).child(userUid).child(KEY_UID)
-                    .setValue(userUid)
+        viewbinding.apply {
+            viewModel.auth.createUserWithEmailAndPassword(
+                viewbinding.emailText.text.toString(),
+                viewbinding.passwordText.text.toString()
+            ).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    showRegisterSuccessDialog()
+                    val userUid = FirebaseAuth.getInstance().currentUser!!.uid
+                    ref.child(KEY_USERS).child(userUid).child(KEY_EMAIL)
+                        .setValue(emailText.text.toString())
+                    ref.child(KEY_USERS).child(userUid).child(KEY_USERNAME)
+                        .setValue(usernameText.text.toString())
+                    ref.child(KEY_USERS).child(userUid).child(KEY_PASSWORD)
+                        .setValue(passwordText.text.toString())
+                    ref.child(KEY_USERS).child(userUid).child(KEY_UID)
+                        .setValue(userUid)
 
 
+                }
+            }.addOnFailureListener { exception ->
+                exception.message?.let { showToast(it) }
             }
-        }.addOnFailureListener { exception ->
-            exception.message?.let { showToast(it) }
         }
     }
 

@@ -11,6 +11,17 @@
         android:id="@+id/dashboardAppBar"
         layout="@layout/app_main_toolbar"/>
 
+    <TextView
+        android:id="@+id/holder_username"
+        tools:text="Hoşgeldin MuratCan"
+        android:padding="6dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
+        android:textStyle="italic"
+        android:gravity="center"
+        android:background="@drawable/bg_username_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,7 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
-            android:hint="Grup key giriniz"
+            android:hint="@string/enter_group_name"
             app:layout_constraintEnd_toStartOf="@+id/btnGrubaKatil"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +44,7 @@
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Katıl"
+            android:text="@string/join"
             app:layout_constraintEnd_toStartOf="@+id/btnGrupKur"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,7 +53,7 @@
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Yeni Grup"
+            android:text="@string/new_group"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -57,7 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <TextView
-            android:text="Katıldığın Gruplar :"
+            android:text="@string/my_groups"
             android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

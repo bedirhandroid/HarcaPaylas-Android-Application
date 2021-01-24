@@ -8,17 +8,18 @@ import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.ui.adapter.GroupsAdapter
-import com.bedirhandag.harcapaylas.ui.activity.grup.GroupActivity
+import com.bedirhandag.harcapaylas.ui.activity.group.GroupActivity
 import com.bedirhandag.harcapaylas.databinding.ActivityDashboardBinding
 import com.bedirhandag.harcapaylas.ui.activity.login.LoginActivity
-import com.bedirhandag.harcapaylas.util.showToast
+import com.bedirhandag.harcapaylas.util.*
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPKEY
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPS
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUP_MEMBERS
+import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERNAME
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERS
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_WHICH_GROUP
-import com.bedirhandag.harcapaylas.util.applyDivider
 import com.google.firebase.auth.FirebaseAuth
+import com.bedirhandag.harcapaylas.R
 import com.google.firebase.database.*
 
 class DashboardActivity : AppCompatActivity() {
@@ -35,9 +36,27 @@ class DashboardActivity : AppCompatActivity() {
         initFirebase()
         setupViewBinding()
         initToolbar()
+        updateUsernameText()
         initObservers()
         initListeners()
         getJoinedGroups()
+    }
+
+    private fun updateUsernameText() {
+        viewbinding.holderUsername.apply {
+            ref.child(KEY_USERS)
+                .child(userUID)
+                .child(KEY_USERNAME)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        snapshot.value?.let {
+                            visible()
+                            text = getString(R.string.welcome_username, it.toString())
+                        } ?: kotlin.run { gone() }
+                    }
+                    override fun onCancelled(error: DatabaseError) {}
+                })
+        }
     }
 
     private fun initToolbar() {
@@ -47,8 +66,8 @@ class DashboardActivity : AppCompatActivity() {
                 FirebaseAuth.getInstance().signOut()
                 navigateToLoginActivity()
             }
-            }
         }
+    }
 
     private fun initObservers() {
         viewModel.apply {
@@ -67,7 +86,7 @@ class DashboardActivity : AppCompatActivity() {
                         navigateToGroupActivity(_clickedItem)
                     },
                     { _longClickedItem ->
-                        //Todo : Bedo uzun basıldığında itemi firebase'den silelim
+                        updateFirebaseWithRemovedGroup(_longClickedItem)
                     }
                 )
                 adapter = groupsAdapter
@@ -108,7 +127,7 @@ class DashboardActivity : AppCompatActivity() {
         viewModel.joinedGroups.value?.find { it == viewbinding.key.text.toString() }?.let {
             navigateToGroupActivity(it)
         } ?: kotlin.run {
-            showToast("Grup bulunamadı!")
+            joinExistingGroup()
         }
     }
 
@@ -125,6 +144,39 @@ class DashboardActivity : AppCompatActivity() {
         Intent(this@DashboardActivity, LoginActivity::class.java).also { _intent ->
             startActivity(_intent)
         }
+    }
+
+    private fun joinExistingGroup() {
+        val grupKey = viewbinding.key.text.toString()
+
+        ref.child(KEY_GROUPS).child(grupKey).child(KEY_GROUPKEY)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.value == null || snapshot.value.toString().isEmpty()) {
+                        showToast("Grup bulunamadı!")
+                    } else {
+                        ref.child(KEY_GROUPS)
+                            .child(grupKey)
+                            .child(KEY_GROUP_MEMBERS)
+                            .child(userUID)
+                            .setValue(userUID)
+
+                        updateFirebaseWithJoinedGroup(grupKey)
+                        groupsAdapter.addItem(grupKey)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            Intent(this@DashboardActivity, GroupActivity::class.java).apply {
+                                addFlags(FLAG_ACTIVITY_NO_ANIMATION)
+                                putExtra(KEY_GROUPKEY, grupKey)
+                            }.also { _intent ->
+                                viewbinding.key.setText(String())
+                                startActivity(_intent)
+                            }
+                        }, 500)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
     private fun createGroupOperation() {
@@ -168,7 +220,7 @@ class DashboardActivity : AppCompatActivity() {
     private fun updateFirebaseWithJoinedGroup(groupKey: String) {
         arrayListOf<String>().apply {
             viewModel.joinedGroups.value?.let {
-                it.forEach {  _value ->
+                it.forEach { _value ->
                     add(_value)
                 }
             }
@@ -179,6 +231,37 @@ class DashboardActivity : AppCompatActivity() {
                 .child(KEY_WHICH_GROUP)
                 .setValue(it)
         }
+    }
+
+    private fun updateFirebaseWithRemovedGroup(groupKey: String) {
+        arrayListOf<String>().apply {
+            var tempRemoveItem = String()
+            var tempRemoveItemPosition = String()
+            viewModel.joinedGroups.value?.forEach { _value ->
+                if(_value != groupKey) {
+                    add(_value)
+                } else {
+                    tempRemoveItem = _value
+                }
+            }
+            viewModel.joinedGroups.value?.remove(tempRemoveItem)
+            groupsAdapter.removeItem(tempRemoveItem)
+        }.also {
+            ref.child(KEY_USERS)
+                .child(userUID)
+                .child(KEY_WHICH_GROUP)
+                .setValue(it)
+        }
+
+        removeMeFromGroup(groupKey)
+    }
+
+    private fun removeMeFromGroup(groupKey: String) {
+        ref.child(KEY_GROUPS)
+            .child(groupKey)
+            .child(KEY_GROUP_MEMBERS)
+            .child(userUID)
+            .removeValue()
     }
 
     private fun setupViewBinding() {

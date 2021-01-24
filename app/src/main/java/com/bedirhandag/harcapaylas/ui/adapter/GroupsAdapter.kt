@@ -29,6 +29,11 @@ class GroupsAdapter(
         }
     }
 
+    fun removeItem(item: String) {
+        itemList.remove(item)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostHolder {
         LayoutInflater.from(parent.context).inflate(R.layout.row_adapter_groups_item,parent,false).also {
             return PostHolder(it)
