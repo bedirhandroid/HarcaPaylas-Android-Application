@@ -31,9 +31,9 @@ class DashboardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupViewModel()
         initFirebase()
         setupViewBinding()
-        setupViewModel()
         initToolbar()
         initObservers()
         initListeners()
@@ -44,12 +44,11 @@ class DashboardActivity : AppCompatActivity() {
         viewbinding.dashboardAppBar.apply {
             pageTitle.text = "HarcaPaylaş"
             logout.setOnClickListener {
-                Intent(this@DashboardActivity, LoginActivity::class.java).also { _intent ->
-                    startActivity(_intent)
-                }
+                FirebaseAuth.getInstance().signOut()
+                navigateToLoginActivity()
+            }
             }
         }
-    }
 
     private fun initObservers() {
         viewModel.apply {
@@ -94,6 +93,7 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun initFirebase() {
         ref = FirebaseDatabase.getInstance().reference
+        viewModel.auth = FirebaseAuth.getInstance()
         FirebaseAuth.getInstance().currentUser?.uid?.let { userUID = it }
     }
 
@@ -117,6 +117,12 @@ class DashboardActivity : AppCompatActivity() {
             addFlags(FLAG_ACTIVITY_NO_ANIMATION)
             putExtra(KEY_GROUPKEY, groupKey)
         }.also { _intent ->
+            startActivity(_intent)
+        }
+    }
+
+    private fun navigateToLoginActivity() {
+        Intent(this@DashboardActivity, LoginActivity::class.java).also { _intent ->
             startActivity(_intent)
         }
     }
@@ -151,7 +157,7 @@ class DashboardActivity : AppCompatActivity() {
                                 viewbinding.key.setText(String())
                                 startActivity(_intent)
                             }
-                        },500)
+                        }, 500)
                     }
                 }
 
