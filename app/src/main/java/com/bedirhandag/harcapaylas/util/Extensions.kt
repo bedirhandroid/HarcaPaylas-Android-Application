@@ -51,7 +51,7 @@ fun showAlert(
         dialog.setPositiveButton(context.getString(R.string.ok)) { d, _ ->
             block?.let {
                 block()
-            } ?: kotlin.run {
+            } ?: run {
                 d.cancel()
             }
         }
@@ -63,6 +63,36 @@ fun showAlert(
         }
 
     }
+}
+
+fun showConfirmAlert(
+    context: Context,
+    title: String = "",
+    msg: String,
+    iconResId: Int? = null,
+    codeBlock: ((b:Boolean) -> Unit)?
+) {
+    val dialog: AlertDialog.Builder = AlertDialog.Builder(context)
+    with(dialog, {
+        setCancelable(false)
+        if (title.isNotEmpty())
+            setTitle(title)
+        setMessage(msg)
+        iconResId?.let {
+            dialog.setIcon(iconResId)
+        }
+        setPositiveButton(
+            context.getString(R.string.ok)
+        ) { _, _ ->
+            codeBlock?.let { it(true) }
+        }
+        setNegativeButton(context.getString(R.string.cancel)) { _, _ ->
+            codeBlock?.let { it(false) }
+        }
+        create()
+        if (msg.isNotEmpty())
+            show()
+    })
 }
 
 fun View.visible() {

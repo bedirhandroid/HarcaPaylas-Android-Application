@@ -31,4 +31,6 @@
     <string name="add_report_success_message">Harcama bildirimi başarıyla eklendi!</string>
     <string name="register_success_title">Kayıt Başarılı!</string>
     <string name="register_success_message">Başarılı bir şekilde kayıt oldunuz. Lütfen giriş yapınız!</string>
+    <string name="exit_group_title">Gruptan Çık</string>
+    <string name="exit_group_message">%s grubundan çıkmak üzeresiniz. Bunu yapmak istediğinize emin misiniz?</string>
 </resources>

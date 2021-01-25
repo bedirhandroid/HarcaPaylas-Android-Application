@@ -86,7 +86,16 @@ class DashboardActivity : AppCompatActivity() {
                         navigateToGroupActivity(_clickedItem)
                     },
                     { _longClickedItem ->
-                        updateFirebaseWithRemovedGroup(_longClickedItem)
+                        showConfirmAlert(
+                            this@DashboardActivity,
+                            title = getString(R.string.exit_group_title),
+                            msg = getString(R.string.exit_group_message, _longClickedItem),
+                            iconResId = R.drawable.ic_warning
+                        ) { _isOkButton ->
+                            if (_isOkButton) {
+                                updateFirebaseWithRemovedGroup(_longClickedItem)
+                            }
+                        }
                     }
                 )
                 adapter = groupsAdapter
