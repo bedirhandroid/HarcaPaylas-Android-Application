@@ -30,9 +30,16 @@ class LoginActivity : AppCompatActivity() {
         setupViewBinding()
         setupViewModel()
         initFirebaseAuth()
+        initToolbar()
         initObservers()
         initListeners()
         checkSession()
+    }
+
+    private fun initToolbar() {
+        viewbinding.activityLoginAppBar.apply {
+            pageTitle.text = getString(R.string.app_name)
+        }
     }
 
     private fun checkSession() {
@@ -64,6 +71,7 @@ class LoginActivity : AppCompatActivity() {
             usernameText.gone()
             btnAction.text = getString(R.string.login)
             btnChangeAction.text = getString(R.string.second_register)
+            loginHeaderText.text = getString(R.string.login)
         }
     }
 
@@ -73,6 +81,7 @@ class LoginActivity : AppCompatActivity() {
             usernameText.visible()
             btnAction.text = getString(R.string.register)
             btnChangeAction.text = getString(R.string.second_login)
+            loginHeaderText.text = getString(R.string.register)
         }
     }
 
