@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:background="@drawable/border_grey"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
+        <View
+            android:background="@drawable/gradiend_blue_bg"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toTopOf="@id/holderUname"
+            app:layout_constraintStart_toStartOf="@id/holderUname"
+            app:layout_constraintBottom_toBottomOf="@id/holderUname"
+            app:layout_constraintEnd_toEndOf="@id/holderUname"/>
+
+        <TextView
+            android:id="@+id/holderUname"
+            tools:text="mrtcnkb"
+            android:textColor="@color/md_white_1000"
+            android:textSize="17sp"
+            android:gravity="center"
+            android:background="@drawable/report_username_grey_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/holderPrice"
+        android:layout_weight="1"
+        tools:text="₺ 1000"
+        android:textColor="@color/md_white_1000"
+        android:textSize="17sp"
+        android:gravity="center"
+        android:background="@drawable/report_price_grey_bg"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

@@ -57,17 +57,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun clearUI() {
-        viewbinding.apply {
-            emailText.setText("mrt@gmail.com")
-            usernameText.setText("mrtcnkb")
-            passwordText.setText("mrtmrt")
-        }
-    }
-
     private fun updateLoginUI() {
         viewbinding.apply {
-            clearUI()
             usernameText.gone()
             btnAction.text = getString(R.string.login)
             btnChangeAction.text = getString(R.string.second_register)
@@ -77,7 +68,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun updateRegisterUI() {
         viewbinding.apply {
-            clearUI()
             usernameText.visible()
             btnAction.text = getString(R.string.register)
             btnChangeAction.text = getString(R.string.second_login)

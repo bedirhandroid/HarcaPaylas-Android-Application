@@ -19,8 +19,13 @@
     <string name="placeholder_add_report">Harcama Bildir</string>
 
     <string name="placeholder_group_item_title">%s</string>
-    <string name="placeholder_price">₺%s</string>
+    <string name="placeholder_price">₺ %s</string>
     <string name="placeholder_group">Grup : %s</string>
+    <string name="placeholder_transaction_details">Harcama Detayları</string>
+    <string name="placeholder_empty_total_price">Toplam Harcama : ₺ 0</string>
+    <string name="placeholder_total_price">Toplam Harcama : ₺ %s</string>
+    <string name="enter_valid_groupname">Lütfen geçerli bir grup adı giriniz!</string>
+
 
     <string name="ok">Tamam</string>
     <string name="cancel">İptal</string>

@@ -36,7 +36,7 @@
 
     <TextView
         android:id="@+id/edtPrice"
-        tools:text="₺1000"
+        tools:text="₺ 1000"
         android:textColor="@color/md_white_1000"
         android:textSize="17sp"
         android:background="@drawable/report_price_grey_bg"

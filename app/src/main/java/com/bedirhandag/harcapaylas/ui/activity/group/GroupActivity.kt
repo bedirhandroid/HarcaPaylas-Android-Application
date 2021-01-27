@@ -1,11 +1,13 @@
 package com.bedirhandag.harcapaylas.ui.activity.group
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.R
 import com.bedirhandag.harcapaylas.databinding.ActivityGroupBinding
 import com.bedirhandag.harcapaylas.model.ReportModel
+import com.bedirhandag.harcapaylas.ui.activity.transactiondetails.TransactionDetailsActivity
 import com.bedirhandag.harcapaylas.ui.adapter.ReportsAdapter
 import com.bedirhandag.harcapaylas.ui.fragment.addreport.AddReportFragment
 import com.bedirhandag.harcapaylas.util.showToast
@@ -81,6 +83,15 @@ class GroupActivity : AppCompatActivity() {
     private fun initListener() {
         viewbinding.apply {
             addReport.setOnClickListener { showAddReportPopup() }
+            btnTransactionDetails.setOnClickListener { transactionDetailsOperation() }
+        }
+    }
+
+    private fun transactionDetailsOperation() {
+        Intent(this, TransactionDetailsActivity::class.java).apply {
+            putExtra(KEY_GROUPKEY, viewModel.groupKey)
+        }.also { _intent ->
+            startActivity(_intent)
         }
     }
 

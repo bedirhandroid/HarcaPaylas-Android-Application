@@ -13,9 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name="com.bedirhandag.harcapaylas.ui.activity.group.GroupActivity"/>
-        <activity android:name="com.bedirhandag.harcapaylas.ui.activity.dashboard.DashboardActivity" />
-        <activity android:name="com.bedirhandag.harcapaylas.ui.activity.login.LoginActivity">
+        <activity android:name=".ui.activity.transactiondetails.TransactionDetailsActivity"></activity>
+        <activity android:name=".ui.activity.group.GroupActivity" />
+        <activity android:name=".ui.activity.dashboard.DashboardActivity" />
+        <activity android:name=".ui.activity.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -20,6 +20,7 @@ import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERS
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_WHICH_GROUP
 import com.google.firebase.auth.FirebaseAuth
 import com.bedirhandag.harcapaylas.R
+import com.bedirhandag.harcapaylas.model.GroupMemberDetail
 import com.google.firebase.database.*
 
 class DashboardActivity : AppCompatActivity() {
@@ -36,23 +37,20 @@ class DashboardActivity : AppCompatActivity() {
         initFirebase()
         setupViewBinding()
         initToolbar()
-        updateUsernameText()
+        getUsername()
         initObservers()
         initListeners()
         getJoinedGroups()
     }
 
-    private fun updateUsernameText() {
+    private fun getUsername() {
         viewbinding.holderUsername.apply {
             ref.child(KEY_USERS)
                 .child(userUID)
                 .child(KEY_USERNAME)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        snapshot.value?.let {
-                            visible()
-                            text = getString(R.string.welcome_username, it.toString())
-                        } ?: kotlin.run { gone() }
+                        viewModel.username.value = (snapshot.value as String?).toString()
                     }
                     override fun onCancelled(error: DatabaseError) {}
                 })
@@ -73,6 +71,12 @@ class DashboardActivity : AppCompatActivity() {
         viewModel.apply {
             joinedGroups.observe(this@DashboardActivity, {
                 initAdapter()
+            })
+            username.observe(this@DashboardActivity, {
+                it?.let {
+                    viewbinding.holderUsername.visible()
+                    viewbinding.holderUsername.text = getString(R.string.welcome_username, it)
+                } ?: kotlin.run { viewbinding.holderUsername.gone() }
             })
         }
     }
@@ -155,73 +159,97 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    private fun String.checkGroupKeyIsEmpty(block: (String) -> Unit) = when {
+            isNotBlank() -> block(this)
+            else -> showToast(getString(R.string.enter_valid_groupname))
+        }
+
     private fun joinExistingGroup() {
-        val grupKey = viewbinding.key.text.toString()
-
-        ref.child(KEY_GROUPS).child(grupKey).child(KEY_GROUPKEY)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.value == null || snapshot.value.toString().isEmpty()) {
-                        showToast("Grup bulunamadı!")
-                    } else {
-                        ref.child(KEY_GROUPS)
-                            .child(grupKey)
-                            .child(KEY_GROUP_MEMBERS)
-                            .child(userUID)
-                            .setValue(userUID)
-
-                        updateFirebaseWithJoinedGroup(grupKey)
-                        groupsAdapter.addItem(grupKey)
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            Intent(this@DashboardActivity, GroupActivity::class.java).apply {
-                                addFlags(FLAG_ACTIVITY_NO_ANIMATION)
-                                putExtra(KEY_GROUPKEY, grupKey)
-                            }.also { _intent ->
-                                viewbinding.key.setText(String())
-                                startActivity(_intent)
-                            }
-                        }, 500)
+        viewbinding.key.text.toString().checkGroupKeyIsEmpty { _groupKey ->
+            ref.child(KEY_GROUPS).child(_groupKey).child(KEY_GROUPKEY)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.value == null || snapshot.value.toString().isEmpty()) {
+                            showToast("Grup bulunamadı!")
+                        } else {
+                            updateGroupMembers(_groupKey)
+                            updateFirebaseWithJoinedGroup(_groupKey)
+                            groupsAdapter.addItem(_groupKey)
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                Intent(this@DashboardActivity, GroupActivity::class.java).apply {
+                                    addFlags(FLAG_ACTIVITY_NO_ANIMATION)
+                                    putExtra(KEY_GROUPKEY, _groupKey)
+                                }.also { _intent ->
+                                    viewbinding.key.setText(String())
+                                    startActivity(_intent)
+                                }
+                            }, 500)
+                        }
                     }
-                }
 
-                override fun onCancelled(error: DatabaseError) {}
-            })
+                    override fun onCancelled(error: DatabaseError) {}
+                })
+        }
     }
 
     private fun createGroupOperation() {
-        val grupKey = viewbinding.key.text.toString()
+        viewbinding.key.text.toString().checkGroupKeyIsEmpty { _groupKey ->
+            ref.child(KEY_GROUPS).child(_groupKey).child(KEY_GROUPKEY)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.value != null && snapshot.value.toString().isNotEmpty()) {
+                            showToast("Bu Grup İsmi Kullanılıyor! Lütfen Farklı Bir Giriş Deneyiniz!")
+                        } else {
+                            ref.child(KEY_GROUPS)
+                                .child(_groupKey)
+                                .child(KEY_GROUPKEY)
+                                .setValue(_groupKey)
 
-        ref.child(KEY_GROUPS).child(grupKey).child(KEY_GROUPKEY)
+                            updateGroupMembers(_groupKey)
+
+                            updateFirebaseWithJoinedGroup(_groupKey)
+                            groupsAdapter.addItem(_groupKey)
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                Intent(this@DashboardActivity, GroupActivity::class.java).apply {
+                                    addFlags(FLAG_ACTIVITY_NO_ANIMATION)
+                                    putExtra(KEY_GROUPKEY, _groupKey)
+                                }.also { _intent ->
+                                    viewbinding.key.setText(String())
+                                    startActivity(_intent)
+                                }
+                            }, 500)
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {}
+                })
+        }
+    }
+
+    private fun updateGroupMembers(groupKey: String) {
+        ref.child(KEY_GROUPS)
+            .child(groupKey)
+            .child(KEY_GROUP_MEMBERS)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.value != null && snapshot.value.toString().isNotEmpty()) {
-                        showToast("Bu Grup İsmi Kullanılıyor! Lütfen Farklı Bir Giriş Deneyiniz!")
-                    } else {
+                    arrayListOf<GroupMemberDetail>().apply {
+                        (snapshot.value as ArrayList<HashMap<String, String>>?)?.convertToTransactionDetailList()?.forEach {
+                            add(it)
+                        }
+                        add(
+                            GroupMemberDetail(
+                                userId = userUID,
+                                username = viewModel.username.value.toString(),
+                                price = "0"
+                            )
+                        )
+                    }.also { _newList ->
                         ref.child(KEY_GROUPS)
-                            .child(grupKey)
-                            .child(KEY_GROUPKEY)
-                            .setValue(grupKey)
-
-                        ref.child(KEY_GROUPS)
-                            .child(grupKey)
+                            .child(groupKey)
                             .child(KEY_GROUP_MEMBERS)
-                            .child(userUID)
-                            .setValue(userUID)
-
-                        updateFirebaseWithJoinedGroup(grupKey)
-                        groupsAdapter.addItem(grupKey)
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            Intent(this@DashboardActivity, GroupActivity::class.java).apply {
-                                addFlags(FLAG_ACTIVITY_NO_ANIMATION)
-                                putExtra(KEY_GROUPKEY, grupKey)
-                            }.also { _intent ->
-                                viewbinding.key.setText(String())
-                                startActivity(_intent)
-                            }
-                        }, 500)
+                            .setValue(_newList)
                     }
                 }
-
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
@@ -245,7 +273,6 @@ class DashboardActivity : AppCompatActivity() {
     private fun updateFirebaseWithRemovedGroup(groupKey: String) {
         arrayListOf<String>().apply {
             var tempRemoveItem = String()
-            var tempRemoveItemPosition = String()
             viewModel.joinedGroups.value?.forEach { _value ->
                 if(_value != groupKey) {
                     add(_value)
@@ -269,8 +296,23 @@ class DashboardActivity : AppCompatActivity() {
         ref.child(KEY_GROUPS)
             .child(groupKey)
             .child(KEY_GROUP_MEMBERS)
-            .child(userUID)
-            .removeValue()
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    arrayListOf<GroupMemberDetail>().apply {
+                        (snapshot.value as ArrayList<HashMap<String, String>>?)?.convertToTransactionDetailList()?.forEach {
+                            if(it.userId != userUID) {
+                                add(it)
+                            }
+                        }
+                    }.also { _newList ->
+                        ref.child(KEY_GROUPS)
+                            .child(groupKey)
+                            .child(KEY_GROUP_MEMBERS)
+                            .setValue(_newList)
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
     private fun setupViewBinding() {

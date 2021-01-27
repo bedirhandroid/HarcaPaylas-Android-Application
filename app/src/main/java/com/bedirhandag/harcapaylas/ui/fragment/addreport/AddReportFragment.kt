@@ -14,6 +14,7 @@ import com.bedirhandag.harcapaylas.model.ReportModel
 import com.bedirhandag.harcapaylas.util.*
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPKEY
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUPS
+import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_GROUP_MEMBERS
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_REPORTS
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERNAME
 import com.bedirhandag.harcapaylas.util.FirebaseKeys.KEY_USERS
@@ -139,6 +140,7 @@ class AddReportFragment : Fragment() {
                             .child(KEY_REPORTS)
                             .setValue(viewModel.reportList.value)
                     }
+                    updateGroupMemberTotalPrice()
                     showAlert(
                         context = requireActivity(),
                         title = getString(R.string.add_report_success_title),
@@ -153,6 +155,31 @@ class AddReportFragment : Fragment() {
         }
     }
 
+    private fun updateGroupMemberTotalPrice() {
+        viewModel.ref.child(KEY_GROUPS)
+            .child(viewModel.groupKey)
+            .child(KEY_GROUP_MEMBERS)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    (snapshot.value as ArrayList<HashMap<String, String>>?)?.convertToTransactionDetailList()?.apply {
+                            forEach {
+                                if (it.userId == viewModel.userUID) {
+                                    val totalPrice = (it.price?.toIntOrNull()?:0) + (viewBinding.edtPrice.text.toString().toIntOrNull()?:0)
+                                    it.price = totalPrice.toString()
+                                }
+                            }
+                        }.also { _newList ->
+                            viewModel.ref.child(KEY_GROUPS)
+                                .child(viewModel.groupKey)
+                                .child(KEY_GROUP_MEMBERS)
+                                .setValue(_newList)
+                        }
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
     private fun initToolbar() {
         viewBinding.addReportAppBar.apply {
             pageTitle.text = getString(R.string.placeholder_add_report)
@@ -165,7 +192,10 @@ class AddReportFragment : Fragment() {
 
     companion object {
         var addReportComplete: AddReportCompleteListener? = null
-        fun newInstance(groupKey: String, AddReportCompleteListener: AddReportCompleteListener): AddReportFragment {
+        fun newInstance(
+            groupKey: String,
+            AddReportCompleteListener: AddReportCompleteListener
+        ): AddReportFragment {
             addReportComplete = AddReportCompleteListener
             val addReportFragment = AddReportFragment()
             addReportFragment.arguments = bundleOf(KEY_GROUPKEY to groupKey)

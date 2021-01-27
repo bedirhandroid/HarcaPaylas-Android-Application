@@ -2,6 +2,7 @@ package com.bedirhandag.harcapaylas.ui.fragment.addreport
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bedirhandag.harcapaylas.model.GroupMemberDetail
 import com.bedirhandag.harcapaylas.model.ReportModel
 import com.google.firebase.database.DatabaseReference
 
@@ -11,5 +12,4 @@ class AddReportViewModel : ViewModel() {
     lateinit var ref: DatabaseReference
     lateinit var userUID: String
     lateinit var username: String
-
 }

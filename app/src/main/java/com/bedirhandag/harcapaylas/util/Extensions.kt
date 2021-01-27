@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.bedirhandag.harcapaylas.R
+import com.bedirhandag.harcapaylas.model.GroupMemberDetail
 
 fun Context.showToast(message: String) =
     Toast.makeText(this, message, LENGTH_SHORT).show()
@@ -101,4 +102,18 @@ fun View.visible() {
 
 fun View.gone() {
     visibility = View.GONE
+}
+
+fun ArrayList<HashMap<String,String>>.convertToTransactionDetailList(): ArrayList<GroupMemberDetail> {
+    val reportArrayList = arrayListOf<GroupMemberDetail>()
+    forEach {
+        GroupMemberDetail(
+            it["userId"],
+            it["username"],
+            it["price"]
+        ).also { _model ->
+            reportArrayList.add(_model)
+        }
+    }
+    return reportArrayList
 }
