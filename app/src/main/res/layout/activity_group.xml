@@ -15,7 +15,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/btnTransactionDetails"
+            app:layout_constraintBottom_toTopOf="@+id/cardView_btn_details"
             tools:ignore="UselessParent">
 
             <include
@@ -49,16 +49,25 @@
             </RelativeLayout>
 
         </LinearLayout>
-        <Button
-            android:id="@+id/btnTransactionDetails"
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView_btn_details"
             android:layout_width="0dp"
             android:layout_height="?attr/actionBarSize"
-            android:text="@string/placeholder_transaction_details"
-            android:background="@color/facebook_blue"
-            android:textColor="@color/md_white_1000"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:cardCornerRadius="20dp">
+
+            <Button
+                android:id="@+id/btnTransactionDetails"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:text="@string/placeholder_transaction_details"
+                android:background="@color/facebook_blue"
+                android:textColor="@color/md_white_1000"/>
+
+        </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <FrameLayout
         android:id="@+id/fragmentContainer"

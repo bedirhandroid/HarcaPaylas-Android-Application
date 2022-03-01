@@ -35,12 +35,15 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
     private fun initObservers() {
         viewModel.apply {
-            transactionDetailList.observe(this@TransactionDetailsActivity, {
-                it.sumBy { _item -> _item.price?.toInt()?:0 }.also { _calculatedTotalPrice ->
-                    viewbinding.totalPrice.text = getString(R.string.placeholder_total_price, _calculatedTotalPrice.toString())
+            transactionDetailList.observe(this@TransactionDetailsActivity) {
+                it.sumBy { _item -> _item.price?.toInt() ?: 0 }.also { _calculatedTotalPrice ->
+                    viewbinding.totalPrice.text = getString(
+                        R.string.placeholder_total_price,
+                        _calculatedTotalPrice.toString()
+                    )
                 }
                 initAdapter()
-            })
+            }
         }
     }
 

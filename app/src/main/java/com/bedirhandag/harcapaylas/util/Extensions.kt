@@ -74,7 +74,7 @@ fun showConfirmAlert(
     codeBlock: ((b:Boolean) -> Unit)?
 ) {
     val dialog: AlertDialog.Builder = AlertDialog.Builder(context)
-    with(dialog, {
+    with(dialog) {
         setCancelable(false)
         if (title.isNotEmpty())
             setTitle(title)
@@ -93,7 +93,7 @@ fun showConfirmAlert(
         create()
         if (msg.isNotEmpty())
             show()
-    })
+    }
 }
 
 fun View.visible() {

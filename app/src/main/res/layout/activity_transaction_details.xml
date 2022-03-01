@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/totalPrice">
+        app:layout_constraintBottom_toTopOf="@+id/cardView_btn_2">
         <include
             android:id="@+id/detailAppBar"
             layout="@layout/app_toolbar" />
@@ -32,17 +32,28 @@
     </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/totalPrice"
-        android:layout_width="0dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView_btn_2"
+        android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:textAllCaps="true"
-        android:gravity="center"
-        android:text="@string/placeholder_empty_total_price"
-        android:background="@color/facebook_blue"
-        android:textColor="@color/md_white_1000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:cardCornerRadius="20dp">
+
+        <TextView
+            android:id="@+id/totalPrice"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:text="@string/placeholder_empty_total_price"
+            android:background="@color/facebook_blue"
+            android:textColor="@color/md_white_1000"/>
+
+    </androidx.cardview.widget.CardView>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

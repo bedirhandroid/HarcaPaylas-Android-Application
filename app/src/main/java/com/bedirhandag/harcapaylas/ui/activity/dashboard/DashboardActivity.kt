@@ -59,7 +59,7 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun initToolbar() {
         viewbinding.dashboardAppBar.apply {
-            pageTitle.text = "HarcaPaylaş"
+            pageTitle.text = getString(R.string.app_name)
             logout.setOnClickListener {
                 FirebaseAuth.getInstance().signOut()
                 navigateToLoginActivity()
@@ -69,15 +69,15 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun initObservers() {
         viewModel.apply {
-            joinedGroups.observe(this@DashboardActivity, {
+            joinedGroups.observe(this@DashboardActivity) {
                 initAdapter()
-            })
-            username.observe(this@DashboardActivity, {
+            }
+            username.observe(this@DashboardActivity) {
                 it?.let {
                     viewbinding.holderUsername.visible()
                     viewbinding.holderUsername.text = getString(R.string.welcome_username, it)
                 } ?: kotlin.run { viewbinding.holderUsername.gone() }
-            })
+            }
         }
     }
 

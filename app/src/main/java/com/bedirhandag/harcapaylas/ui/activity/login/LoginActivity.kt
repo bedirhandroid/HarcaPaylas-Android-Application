@@ -48,12 +48,12 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initObservers() {
         viewModel.apply {
-            isActionLogin.observe(this@LoginActivity, {
+            isActionLogin.observe(this@LoginActivity) {
                 when {
                     it -> updateLoginUI()
                     else -> updateRegisterUI()
                 }
-            })
+            }
         }
     }
 
