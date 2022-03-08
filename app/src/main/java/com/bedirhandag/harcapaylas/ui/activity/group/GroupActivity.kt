@@ -44,9 +44,9 @@ class GroupActivity : AppCompatActivity() {
 
     private fun initObservers() {
         viewModel.apply {
-            reportList.observe(this@GroupActivity, {
+            reportList.observe(this@GroupActivity) {
                 initAdapter()
-            })
+            }
         }
     }
 

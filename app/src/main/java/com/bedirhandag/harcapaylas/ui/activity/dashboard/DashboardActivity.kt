@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.ui.adapter.GroupsAdapter
 import com.bedirhandag.harcapaylas.ui.activity.group.GroupActivity
@@ -98,6 +99,8 @@ class DashboardActivity : AppCompatActivity() {
                         ) { _isOkButton ->
                             if (_isOkButton) {
                                 updateFirebaseWithRemovedGroup(_longClickedItem)
+                                deleteMemberToGroup(_longClickedItem)
+
                             }
                         }
                     }
@@ -120,6 +123,29 @@ class DashboardActivity : AppCompatActivity() {
                 }
 
                 override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    private fun deleteMemberToGroup(groupKey: String){
+        ref.child(KEY_GROUPS)
+            .child(groupKey)
+            .child(KEY_GROUP_MEMBERS).addListenerForSingleValueEvent(object : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    arrayListOf<GroupMemberDetail>().apply {
+                        var bedirhan = snapshot.value as ArrayList<HashMap<String, String>>?
+                        if(bedirhan?.size!! <= 1){
+                            ref.child(KEY_GROUPS)
+                                .child(groupKey).removeValue()
+                        } else {
+                            Toast.makeText(this@DashboardActivity, "else girdi", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
             })
     }
 
