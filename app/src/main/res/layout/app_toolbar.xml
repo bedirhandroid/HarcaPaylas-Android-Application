@@ -9,11 +9,11 @@
 
     <ImageView
         android:id="@+id/appLogo"
-        android:src="@drawable/home_icon"
+        android:src="@mipmap/ic_launcher_rounded"
         android:layout_width="?attr/actionBarSize"
         android:layout_height="match_parent"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -23,6 +23,7 @@
     <string name="placeholder_group">Grup : %s</string>
     <string name="placeholder_transaction_details">Harcama Detayları</string>
     <string name="placeholder_empty_total_price">Toplam Harcama : ₺ 0</string>
+    <string name="placeholder_empty_count_price">Hesapla</string>
     <string name="placeholder_total_price">Toplam Harcama : ₺ %s</string>
     <string name="enter_valid_groupname">Lütfen geçerli bir grup adı giriniz!</string>
 
