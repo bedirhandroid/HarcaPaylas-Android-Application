@@ -2,6 +2,7 @@ package com.bedirhandag.harcapaylas.ui.activity.transactiondetails
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.bedirhandag.harcapaylas.R
 import com.bedirhandag.harcapaylas.databinding.ActivityTransactionDetailsBinding
@@ -30,6 +31,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         initFirebase()
         initObservers()
         initToolbar()
+        setListeners()
         getTransactionDetailList()
     }
 
@@ -88,6 +90,14 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this).get(TransactionDetailsViewModel::class.java)
+    }
+    
+    private fun setListeners(){
+        viewbinding.apply { 
+            countPrice.setOnClickListener {
+                //TODO: Buraya _calculatedTotalPrice / gruptaki kişi sayısının bölümü eklenecek.
+            }
+        }
     }
 
     private fun setupViewBinding() {
