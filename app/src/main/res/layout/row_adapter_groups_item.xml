@@ -11,7 +11,7 @@
 
     <ImageView
         android:id="@+id/photo"
-        android:src="@drawable/home_icon"
+        android:src="@mipmap/ic_launcher_rounded"
         android:layout_width="40dp"
         android:layout_height="40dp"
         app:layout_constraintStart_toStartOf="parent"
